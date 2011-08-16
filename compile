@@ -1,0 +1,15 @@
+# Code to compile and run complier lab codes
+# Shell script to automate the testing process.
+# This file is added to the bin path
+# Just run this script and it will automatically compile all yacc and lex files in order, link it and run the final output code generated.
+
+
+cd /home/jaseem/Codes/Compiler-Lab/
+
+yacc -d calc.y	# create y.tab.h, y.tab.c
+lex calc.l		# create lex.yy.c
+
+cc lex.yy.c y.tab.c -o compiler.out 	# compile/link
+
+./compiler.out # Run the compiled code.
+
