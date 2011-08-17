@@ -20,7 +20,7 @@
 
 [' \t']		;
 
-[^(\)\t]	{
+[^()\t]	{
 				yyerror("Unknown character");
 			}
 
