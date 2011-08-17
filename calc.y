@@ -8,7 +8,7 @@
 
 %left '+' '-'
 %left '*' '/'
-
+%left '(' ')'
 
 %%
 
@@ -18,11 +18,11 @@ program:
 		;
 expr:
 		INTEGER { $$ = $1; }
+		| '(' expr ')' { $$ = $2; }
 		| expr '+' expr { $$ = $1 + $3; }
 		| expr '-' expr { $$ = $1 - $3; }
 		| expr '*' expr { $$ = $1 * $3; }
 		| expr '/' expr { $$ = $1 / $3; }
-		| '(' expr ')' { $$ = $2; }
 		;
 
 %%
