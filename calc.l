@@ -14,15 +14,13 @@
 				return INTEGER;
 			}
 
-[-+*/\n]	{
-				return *yytext;
-			}
+[-+*\/\(\)\n]	{
+				return (int) yytext[0];
+				}
 
-[' \t']		;
+[ \t]+ ;
 
-[^()\t]	{
-				yyerror("Unknown character");
-			}
+. { yyerror("Unknown input"); }
 
 %%
 
