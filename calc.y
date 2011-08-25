@@ -8,7 +8,6 @@
 
 %left '+' '-'
 %left '*' '/'
-%left '(' ')'
 
 %%
 
@@ -17,12 +16,13 @@ program:
 		|
 		;
 expr:
-		INTEGER { $$ = $1; }
-		| '(' expr ')' { $$ = $2; }
+		INTEGER
 		| expr '+' expr { $$ = $1 + $3; }
 		| expr '-' expr { $$ = $1 - $3; }
 		| expr '*' expr { $$ = $1 * $3; }
 		| expr '/' expr { $$ = $1 / $3; }
+		| '(' expr ')' { $$ = $2; }
+		| '-' expr { $$ = -1 * $2; }
 		;
 
 %%
@@ -33,6 +33,6 @@ void yyerror( char *s) {
 
 int main () {
 	return yyparse();
-	return 1;
+	return 0;
 }
 
