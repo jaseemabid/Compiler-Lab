@@ -3,13 +3,14 @@
 # This file is added to the bin path
 # Just run this script and it will automatically compile all yacc and lex files in order, link it and run the final output code generated.
 
-
 cd /home/jaseem/Codes/Compiler-Lab/
 
+rm lex.yy.c y.tab.c y.tab.h # delete old compiled output files
+echo "Compiling...\n"
 yacc -d calc.y	# create y.tab.h, y.tab.c
 lex calc.l		# create lex.yy.c
-
-cc lex.yy.c y.tab.c -o compiler.out 	# compile/link
+echo "Excecuting...\n\n"
+cc y.tab.c lex.yy.c  -o compiler.out 	# compile/link
 
 ./compiler.out # Run the compiled code.
 
