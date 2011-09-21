@@ -4,4 +4,4 @@ docs/
 *.yy.c
 *.tab.c
 *.tab.h
-
+test.c
