@@ -7,6 +7,8 @@
 
 %%
 
+[\t ]+ ;
+
 [0-9]+		{
 				yylval = atoi(yytext);
 				return INTEGER;
@@ -15,8 +17,6 @@
 [-+*\/\(\)\n]	{
 				return (int) yytext[0];
 				}
-
-[ \t]+ ;
 
 . { yyerror("Unknown input"); }
 
