@@ -8,4 +8,6 @@ struct tNode {
 };
 
 struct tNode* root;
+struct tNode* temp;
+
 
