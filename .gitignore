@@ -5,3 +5,4 @@ docs/
 *.tab.c
 *.tab.h
 test.c
+temp.*
