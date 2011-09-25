@@ -4,7 +4,7 @@
 # Just run this script and it will automatically compile all yacc and lex files in order, link it and run the final output code generated.
 
 cd /home/jaseem/Codes/Compiler-Lab/
-
+clear
 rm lex.yy.c y.tab.c y.tab.h # delete old compiled output files
 echo "Compiling...\n"
 yacc -d calc.y	# create y.tab.h, y.tab.c
