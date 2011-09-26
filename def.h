@@ -2,7 +2,7 @@
 
 /** Sample Expression Tree Node Structure **/
 
-struct tNode {
+struct Tnode {
 	int TYPE;
 					/* Integer, Boolean or Void (for statements) */
 					/* Must point to the type expression tree for user defined types */
@@ -14,12 +14,8 @@ struct tNode {
 					/* For Identifiers/Functions */
 	int VALUE;
 					/* for constants */
-	tNode *ArgList;
+	struct Tnode *ArgList;
 					/* List of arguments for functions */
-	tNode *left, *right;
-}
+	struct Tnode *left, *right;
+};
 
-struct tNode* root;
-struct tNode* temp;
-
-/* struct tNode *TreeCreate(TYPE,NODETYPE,VALUE,NAME,left,right); */
