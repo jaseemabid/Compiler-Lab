@@ -7,8 +7,8 @@ cd /home/jaseem/Codes/Compiler-Lab/
 clear
 rm lex.yy.c y.tab.c y.tab.h # delete old compiled output files
 echo "Compiling...\n"
-yacc -d expTree.y	# create y.tab.h, y.tab.c
-lex expTree.l		# create lex.yy.c
+yacc -d sym.y	# create y.tab.h, y.tab.c
+lex sym.l		# create lex.yy.c
 echo "Excecuting...\n\n"
 cc y.tab.c lex.yy.c  -o compiler.out 	# compile/link
 
