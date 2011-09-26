@@ -4,7 +4,7 @@
 
 struct Tnode {
 	int TYPE;
-					/* Integer, Boolean or Void (for statements) */
+					/* Integer (1), Boolean (2) or Void (3) (for statements) */
 					/* Must point to the type expression tree for user defined types */
 	int NODETYPE;
 					/* this field should carry following information:
