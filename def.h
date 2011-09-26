@@ -9,7 +9,9 @@ struct Tnode {
 	int NODETYPE;
 					/* this field should carry following information:
 					* a) operator : (+,*,/ etc.) for expressions
-					* b) statement Type : (WHILE, READ etc.) for statements */
+					* b) statement Type : (WHILE, READ etc.) for statements 
+					* c) else 0
+					*/
 	char* NAME;
 					/* For Identifiers/Functions */
 	int VALUE;
