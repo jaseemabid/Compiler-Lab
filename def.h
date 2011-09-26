@@ -1,5 +1,18 @@
 /* Common header file */
 
+// Global Variable structure
+
+typedef struct Gsymbol {
+	char *NAME;		// Name of the Identifier
+	int TYPE;		// TYPE can be INTEGER or BOOLEAN
+	int SIZE;		// Size field for arrays
+	int* BINDING;		// Address of the Identifier in Memory
+	struct Gsymbol *NEXT;	// Pointer to next Symbol Table Entry */
+} Gsymbol;
+
+Gsymbol *gList=NULL, *temp=NULL;
+
+
 /** Sample Expression Tree Node Structure **/
 
 struct Tnode {
@@ -19,5 +32,8 @@ struct Tnode {
 	struct Tnode *ArgList;
 					/* List of arguments for functions */
 	struct Tnode *left, *right;
+
+	Gsymbol *Gentry; // For global identifiers/functions
 };
+
 
