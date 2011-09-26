@@ -4,29 +4,28 @@
 #include <stdlib.h>
 #include "def.h"
 
-
-/* struct Tnode *TreeCreate(TYPE,NODETYPE,VALUE,NAME,left,right); */
-struct Tnode* treecreate(int nodetype1,int value1)
-{
+struct Tnode* TreeCreate(int TYPE, int NODETYPE, int VALUE, char* NAME, struct Tnode *left, struct Tnode *right) {
 	struct Tnode* temp=malloc(sizeof(struct Tnode));
-	if(nodetype1==0)
-	{
-		temp->TYPE=1;
-		temp->NODETYPE=nodetype1;
-		temp->VALUE=value1;
-		temp->left=NULL;
-		temp->right=NULL;
 
-	}
-	else if(nodetype1==1||nodetype1==2||nodetype1==3||nodetype1==4)
-	{
-		temp->TYPE=1;
-		temp->NODETYPE=nodetype1;
-		temp->left=NULL;
-		temp->right=NULL;
-	}
+	temp->TYPE		=	TYPE;
+	temp->NODETYPE	=	NODETYPE;
+	temp->VALUE		=	VALUE;
+	temp->left		=	left;
+	temp->right		=	right;
+
 	return temp;
 }
+
+
+struct Tnode* NodeCreate(int TYPE, int NODETYPE, int VALUE) {
+	/*
+		This function to be used while matching variables and operators
+	*/
+	struct Tnode* temp = TreeCreate(TYPE, NODETYPE, VALUE, NULL, NULL,NULL);
+	return temp;
+}
+
+
 
 
 int yywrap(void) {
@@ -39,20 +38,20 @@ int yywrap(void) {
 
 
 %%
-[0-9]+	{	yylval.n=treecreate(0,atoi(yytext));
+[0-9]+	{	yylval.n =	NodeCreate(1, 0, atoi(yytext));
 			return NUM;
 		}
 
-[+]		{	yylval.n=treecreate(1,0);
+[+]		{	yylval.n = NodeCreate(1, 1,555);
 			return OP1;}
 
-[-]		{	yylval.n=treecreate(2,0);
+[-]		{	yylval.n = NodeCreate(1, 2,555);
 			return OP2;}
 
-[*]		{	yylval.n=treecreate(3,0);
+[*]		{	yylval.n = NodeCreate(1, 3,555);
 			return OP3;}
 
-[/]		{	yylval.n=treecreate(4,0);
+[/]		{	yylval.n = NodeCreate(1, 4,555);
 			return OP4;}
 
 [\n()]		{	return *yytext;}
