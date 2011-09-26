@@ -147,6 +147,25 @@ int eval(struct Tnode* root)
 	}
 }
 
+Gsymbol *Glookup(char *NAME) {			// Look up for a global identifier
+	t = glist;
+	do {
+		if(strcmp(t->NAME, NAME)==0) {
+			return t;
+		}
+	} while(t = t->NEXT);
+	return NULL;
+}
+
+void Ginstall(char *NAME, int TYPE, int SIZE) {	// Installation
+	t = (Gsymbol *)malloc(sizeof(Gsymbol));
+	t->NAME = NAME;
+	t->TYPE = TYPE;
+	t->BINDING = malloc(sizeof(int)*SIZE);
+	t->NEXT = glist;
+	glist = t;
+}
+
 int yyerror (char *msg)
 {
 	return fprintf (stderr, "YACC: %s\n", msg);
