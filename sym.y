@@ -71,21 +71,11 @@ void prefix(struct Tnode* root)
 		return;
 	} else {
 		switch(root->NODETYPE ) {
-			case 0 :
-				printf("%d",root->VALUE);
-				break;
-			case 1 :
-				printf("%c",'+');
-				break;
-			case 2 :
-				printf("%c",'-');
-				break;
-			case 3 :
-				printf("%c",'*');
-				break;
-			case 4 :
-				printf("%c",'/');
-				break;
+			case 0 :	printf("%d",root->VALUE);break;
+			case 1 :	printf("%c",'+'); break;
+			case 2 :	printf("%c",'-'); break;
+			case 3 :	printf("%c",'*'); break;
+			case 4 :	printf("%c",'/'); break;
 		}
 		prefix(root->left);
 		prefix(root->right);
@@ -101,21 +91,11 @@ void postfix(struct Tnode* root)
 		postfix(root->left);
 		postfix(root->right);
 		switch(root->NODETYPE ) {
-			case 0 :
-				printf("%d",root->VALUE);
-				break;
-			case 1 :
-				printf("%c",'+');
-				break;
-			case 2 :
-				printf("%c",'-');
-				break;
-			case 3 :
-				printf("%c",'*');
-				break;
-			case 4 :
-				printf("%c",'/');
-				break;
+			case 0 :	printf("%d",root->VALUE); break;
+			case 1 :	printf("%c",'+'); break;
+			case 2 :	printf("%c",'-'); break;
+			case 3 :	printf("%c",'*'); break;
+			case 4 :	printf("%c",'/'); break;
 		}
 	}
 }
@@ -126,24 +106,12 @@ int eval(struct Tnode* root)
 		return;
 	} else {
 		switch(root->NODETYPE ) {
-			case 0 :
-				return(root->VALUE);
-				break;
-			case 1 :
-				return (eval(root->left) + eval(root->right));
-				break;
-			case 2 :
-				return (eval(root->left) - eval(root->right));
-				break;
-			case 3 :
-				return (eval(root->left) * eval(root->right));
-				break;
-			case 4 :
-				return (eval(root->left) / eval(root->right));
-				break;
+			case 0 :	return(root->VALUE); break;
+			case 1 :	return (eval(root->left) + eval(root->right)); break;
+			case 2 :	return (eval(root->left) - eval(root->right)); break;
+			case 3 :	return (eval(root->left) * eval(root->right)); break;
+			case 4 :	return (eval(root->left) / eval(root->right)); break;
 		}
-		
-		
 	}
 }
 
