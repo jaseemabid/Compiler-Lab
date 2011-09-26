@@ -30,11 +30,12 @@ void postfix(struct Tnode*);
 %%
 
 start: expr'\n'		{
-					printf("\n1.Prefix expression\t2.Postfix expression.\t Enter (1/2) : ");
+					printf("\n1.Prefix expression\t2.Postfix expression.\t3. Eval Enter (1/2/3) : ");
 					scanf("%d",&ch);
 					switch(ch) {
 						case 1:printf("\nPrefix expression : \t");prefix($1); printf("\n\n"); break;
 						case 2:printf("\nPostfix expression : \t");postfix($1); printf("\n\n"); break;
+						case 3:printf("\nEval expression : %d\t",eval($1)); printf("\n\n"); break;
 					}
 					return(0);
 				};
@@ -125,6 +126,32 @@ void postfix(struct Tnode* root)
 	}
 }
 
+int eval(struct Tnode* root)
+{
+	if(root==NULL) {
+		return;
+	} else {
+		switch(root->NODETYPE ) {
+			case 0 :
+				return(root->VALUE);
+				break;
+			case 1 :
+				return (eval(root->left) + eval(root->right));
+				break;
+			case 2 :
+				return (eval(root->left) - eval(root->right));
+				break;
+			case 3 :
+				return (eval(root->left) * eval(root->right));
+				break;
+			case 4 :
+				return (eval(root->left) / eval(root->right));
+				break;
+		}
+		
+		
+	}
+}
 
 int yyerror (char *msg)
 {
