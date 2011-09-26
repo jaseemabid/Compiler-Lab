@@ -22,23 +22,21 @@ void postfix(struct Tnode*);
 }
 
 %token NUM OP1 OP2 OP3 OP4
-%type<n> start expr OP1 OP2 OP3 OP4 NUM   
+%type<n> start expr OP1 OP2 OP3 OP4 NUM
 %left OP1 OP2//'+' '-'
 %left OP3 OP4 //'*' '/'
 %left '('
 
 %%
 
-start: expr'\n'			{	
-					printf("MENU\n1.Prefix\n2.Postfix\nEnter your choice:");
+start: expr'\n'		{
+					printf("\n1.Prefix expression\t2.Postfix expression.\t Enter (1/2) : ");
 					scanf("%d",&ch);
-					switch(ch)
-					{
-						case 1:printf("PREFIX EXP: ");prefix($1);break;
-						case 2:printf("POSTFIX EXP: ");postfix($1);break;
-					}			
+					switch(ch) {
+						case 1:printf("\nPrefix expression : \t");prefix($1); printf("\n\n"); break;
+						case 2:printf("\nPostfix expression : \t");postfix($1); printf("\n\n"); break;
+					}
 					return(0);
-				
 				};
 
 expr: expr OP4 expr		{
@@ -51,7 +49,6 @@ expr: expr OP4 expr		{
 					$$->left=$1;
 					$$->right=$3;
 				}
-	
 	|expr OP2 expr		{
 					$$=$2;
 					$$->left=$1;
@@ -62,15 +59,14 @@ expr: expr OP4 expr		{
 					$$->left=$1;
 					$$->right=$3;
 				}
-	|'('expr')'		{	$$=$2;
-				}
-	|NUM			{$$=$1;
-				};
+	|'('expr')'		{	$$=$2; }
+	|NUM			{	$$=$1; }
+	;
 %%
 
 int main (void)
 {
-	printf("Enter the Calculation :");	
+	printf("Enter the Calculation :");
 	return yyparse();
 }
 
@@ -80,19 +76,19 @@ void prefix(struct Tnode* root)
 		return;
 	} else {
 		switch(root->NODETYPE ) {
-			case 0 : 
+			case 0 :
 				printf("%d",root->VALUE);
 				break;
-			case 1 : 
+			case 1 :
 				printf("%c",'+');
 				break;
-			case 2 : 
+			case 2 :
 				printf("%c",'-');
 				break;
-			case 3 : 
+			case 3 :
 				printf("%c",'*');
 				break;
-			case 4 : 
+			case 4 :
 				printf("%c",'/');
 				break;
 		}
@@ -110,19 +106,19 @@ void postfix(struct Tnode* root)
 		postfix(root->left);
 		postfix(root->right);
 		switch(root->NODETYPE ) {
-			case 0 : 
+			case 0 :
 				printf("%d",root->VALUE);
 				break;
-			case 1 : 
+			case 1 :
 				printf("%c",'+');
 				break;
-			case 2 : 
+			case 2 :
 				printf("%c",'-');
 				break;
-			case 3 : 
+			case 3 :
 				printf("%c",'*');
 				break;
-			case 4 : 
+			case 4 :
 				printf("%c",'/');
 				break;
 		}
@@ -130,7 +126,7 @@ void postfix(struct Tnode* root)
 }
 
 
-int yyerror (char *msg) 
+int yyerror (char *msg)
 {
 	return fprintf (stderr, "YACC: %s\n", msg);
 }

@@ -21,7 +21,7 @@ struct Tnode* treecreate(int nodetype1,int value1)
 		temp->VALUE=value1;
 		temp->left=NULL;
 		temp->right=NULL;
-		
+
 	}
 	else if(nodetype1==1||nodetype1==2||nodetype1==3||nodetype1==4)
 	{
@@ -47,16 +47,16 @@ int yywrap(void) {
 [0-9]+	{	yylval.n=treecreate(0,atoi(yytext));
 			return NUM;
 		}
-			
+
 [+]		{	yylval.n=treecreate(1,0);
 			return OP1;}
-			
+
 [-]		{	yylval.n=treecreate(2,0);
 			return OP2;}
-			
+
 [*]		{	yylval.n=treecreate(3,0);
 			return OP3;}
-			
+
 [/]		{	yylval.n=treecreate(4,0);
 			return OP4;}
 
