@@ -1,4 +1,4 @@
-/* Simple calculator v1.0 */
+/* Simple calculator v1.2 */
 
 %{
 	#include "y.tab.h"
