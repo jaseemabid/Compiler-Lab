@@ -10,9 +10,6 @@ typedef struct Gsymbol {
 	struct Gsymbol *NEXT;	// Pointer to next Symbol Table Entry */
 } Gsymbol;
 
-Gsymbol *gList=NULL, *temp=NULL;
-
-
 /** Sample Expression Tree Node Structure **/
 
 struct Tnode {

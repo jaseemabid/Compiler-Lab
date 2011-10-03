@@ -4,7 +4,7 @@
 #include "def.h"
 
 int ch;
-
+Gsymbol *gList=NULL, *temp=NULL;
 
 void prefix(struct Tnode*);
 void postfix(struct Tnode*);
@@ -34,29 +34,17 @@ start: expr'\n'		{
 					return(0);
 				};
 
-expr: expr OP4 expr		{
+expr:	 expr OP4 expr
+		|expr OP3 expr
+		|expr OP2 expr
+		|expr OP1 expr		{
 					$$=$2;
 					$$->left=$1;
 					$$->right=$3;
 				}
-	|expr OP3 expr		{
-					$$=$2;
-					$$->left=$1;
-					$$->right=$3;
-				}
-	|expr OP2 expr		{
-					$$=$2;
-					$$->left=$1;
-					$$->right=$3;
-				}
-	|expr OP1 expr		{
-					$$=$2;
-					$$->left=$1;
-					$$->right=$3;
-				}
-	|'('expr')'		{	$$=$2; }
-	|NUM			{	$$=$1; }
-	;
+		|'('expr')'		{	$$=$2; }
+		|NUM			{	$$=$1; }
+		;
 %%
 
 int main (void)
@@ -116,22 +104,23 @@ int eval(struct Tnode* root)
 }
 
 Gsymbol *Glookup(char *NAME) {			// Look up for a global identifier
-	t = glist;
+	temp = gList;
 	do {
-		if(strcmp(t->NAME, NAME)==0) {
-			return t;
+		if(strcmp(temp->NAME, NAME)==0) {
+			return temp;
 		}
-	} while(t = t->NEXT);
+	} while(temp = temp->NEXT);
 	return NULL;
 }
 
 void Ginstall(char *NAME, int TYPE, int SIZE) {	// Installation
+	Gsymbol *t;
 	t = (Gsymbol *)malloc(sizeof(Gsymbol));
 	t->NAME = NAME;
 	t->TYPE = TYPE;
 	t->BINDING = malloc(sizeof(int)*SIZE);
-	t->NEXT = glist;
-	glist = t;
+	t->NEXT = gList;
+	gList = t;
 }
 
 int yyerror (char *msg)
