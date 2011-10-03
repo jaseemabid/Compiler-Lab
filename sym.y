@@ -10,8 +10,7 @@ void prefix(struct Tnode*);
 void postfix(struct Tnode*);
 %}
 
-%union
-{
+%union {
 	struct Tnode *n;
 }
 
@@ -47,14 +46,12 @@ expr:	 expr OP4 expr
 		;
 %%
 
-int main (void)
-{
+int main (void) {
 	printf("Enter the Calculation :");
 	return yyparse();
 }
 
-void prefix(struct Tnode* root)
-{
+void prefix(struct Tnode* root) {
 	if(root==NULL) {
 		return;
 	} else {
@@ -70,9 +67,7 @@ void prefix(struct Tnode* root)
 	}
 }
 
-
-void postfix(struct Tnode* root)
-{
+void postfix(struct Tnode* root) {
 	if(root==NULL) {
 		return;
 	} else {
@@ -88,8 +83,7 @@ void postfix(struct Tnode* root)
 	}
 }
 
-int eval(struct Tnode* root)
-{
+int eval(struct Tnode* root) {
 	if(root==NULL) {
 		return;
 	} else {
@@ -123,8 +117,7 @@ void Ginstall(char *NAME, int TYPE, int SIZE) {	// Installation
 	gList = t;
 }
 
-int yyerror (char *msg)
-{
+int yyerror (char *msg) {
 	return fprintf (stderr, "YACC: %s\n", msg);
 }
 
