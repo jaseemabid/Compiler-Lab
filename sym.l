@@ -32,18 +32,85 @@ int yywrap(void) {
 		}
 
 [+]		{	yylval.n = TreeCreate(1, 1,555, NULL, NULL,NULL);
-			return OP1;}
+			return OP1;
+		}
 
 [-]		{	yylval.n = TreeCreate(1, 2,555, NULL, NULL,NULL);
-			return OP2;}
+			return OP2;
+		}
 
 [*]		{	yylval.n = TreeCreate(1, 3,555, NULL, NULL,NULL);
-			return OP3;}
+			return OP3;
+		}
 
 [/]		{	yylval.n = TreeCreate(1, 4,555, NULL, NULL,NULL);
-			return OP4;}
+			return OP4;
+		}
 
-[\n()]		{	return *yytext;}
-.	{}
+"read"			{	yylval.node = TreeCreate(3, 'r', 555, NULL,NULL, NULL);
+					return READ;
+				}
+
+"write"			{	yylval.node = TreeCreate(3, 'w', 555, NULL,NULL, NULL);
+					return WRITE;
+				}
+
+"decl"			{	return DECL;}
+
+"enddecl"		{	return ENDDECL;}
+
+"integer"		{	return INTEGER;}
+
+"boolean"		{	return BOOLEAN;}
+
+"main"			{	return MAIN;}
+
+"begin"			{	return BEG;}
+
+"end"			{	return END;}
+
+=				{
+					yylval.node = TreeCreate(3, '=', 555,NULL, NULL, NULL);
+					return EQ;
+				}
+
+[a-zA-Z][a-zA-Z0-9]*	{
+					char *s = malloc(yyleng);
+					strcpy(s, yytext);
+					yylval.node = TreeCreate(3, 0, 555, s,NULL, NULL);
+					return VAR;
+				}
+
+"["			{
+				return *yytext;
+			}
+
+"]"			{
+				return *yytext;
+			}
+
+\(			{
+				return LP; 
+			}
+
+\)			{
+				return RP;
+			}
+
+\;			{
+				return SC;
+			}
+
+,			{
+				return CM;
+			}
+
+[\n]		{
+				return *yytext;
+			}
+
+.		{
+			yyerror("Invalid character"); exit(0); 
+		}
+
 %%
-
