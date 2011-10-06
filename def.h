@@ -22,10 +22,10 @@ struct Tnode {
 					* b) statement Type : (WHILE, READ etc.) for statements 
 					* c) else 0
 					*/
-	char* NAME;
-					/* For Identifiers/Functions */
 	int VALUE;
 					/* for constants */
+	char* NAME;
+					/* For Identifiers/Functions */
 	struct Tnode *ArgList;
 					/* List of arguments for functions */
 	struct Tnode *left, *right;
