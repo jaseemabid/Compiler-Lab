@@ -28,7 +28,7 @@ struct Tnode {
 					/* For Identifiers/Functions */
 	struct Tnode *ArgList;
 					/* List of arguments for functions */
-	struct Tnode *left, *right;
+	struct	Tnode	*Ptr1,	*Ptr2,	*Ptr3;
 
 	Gsymbol *Gentry; // For global identifiers/functions
 };
