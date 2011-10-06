@@ -1,4 +1,5 @@
 %{
+
 #include "y.tab.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,17 +18,6 @@ struct Tnode* TreeCreate(int TYPE, int NODETYPE, int VALUE, char* NAME, struct T
 }
 
 
-struct Tnode* NodeCreate(int TYPE, int NODETYPE, int VALUE) {
-	/*
-		This function to be used while matching variables and operators
-	*/
-	struct Tnode* temp = TreeCreate(TYPE, NODETYPE, VALUE, NULL, NULL,NULL);
-	return temp;
-}
-
-
-
-
 int yywrap(void) {
 	return 1;
 }
@@ -36,22 +26,21 @@ int yywrap(void) {
 %}
 
 
-
 %%
-[0-9]+	{	yylval.n =	NodeCreate(1, 0, atoi(yytext));
+[0-9]+	{	yylval.n =	TreeCreate(1, 0, atoi(yytext), NULL, NULL,NULL);
 			return NUM;
 		}
 
-[+]		{	yylval.n = NodeCreate(1, 1,555);
+[+]		{	yylval.n = TreeCreate(1, 1,555, NULL, NULL,NULL);
 			return OP1;}
 
-[-]		{	yylval.n = NodeCreate(1, 2,555);
+[-]		{	yylval.n = TreeCreate(1, 2,555, NULL, NULL,NULL);
 			return OP2;}
 
-[*]		{	yylval.n = NodeCreate(1, 3,555);
+[*]		{	yylval.n = TreeCreate(1, 3,555, NULL, NULL,NULL);
 			return OP3;}
 
-[/]		{	yylval.n = NodeCreate(1, 4,555);
+[/]		{	yylval.n = TreeCreate(1, 4,555, NULL, NULL,NULL);
 			return OP4;}
 
 [\n()]		{	return *yytext;}
