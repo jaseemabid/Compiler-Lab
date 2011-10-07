@@ -3,12 +3,20 @@
 // Global Variable structure
 
 typedef struct Gsymbol {
-	char *NAME;		// Name of the Identifier
-	int TYPE;		// TYPE can be INTEGER or BOOLEAN
-	int SIZE;		// Size field for arrays
-	int* BINDING;		// Address of the Identifier in Memory
-	struct Gsymbol *NEXT;	// Pointer to next Symbol Table Entry */
+	char *NAME;				// Name of the Identifier
+	int TYPE;				// TYPE can be INTEGER or BOOLEAN
+	int SIZE;				// Size field for arrays
+	int* BINDING;			// Address of the Identifier in Memory
+	struct Gsymbol *NEXT;	// Pointer to next Symbol Table Entry
 } Gsymbol;
+
+typedef	struct	Lsymbol	{
+	char *NAME;				//	Name of the Identifier
+	int TYPE;				//	TYPE can be INTEGER	or BOOLEAN
+	int SIZE;				//	Size field for arrays
+	int* BINDING;			//	Address of the Identifier in Memory
+	struct Lsymbol *NEXT;	//	Pointer to next Symbol Table Entry
+}	Lsymbol;
 
 /** Sample Expression Tree Node Structure **/
 
