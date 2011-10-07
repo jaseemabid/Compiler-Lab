@@ -4,21 +4,31 @@
 #include "def.h"
 
 int ch;
-Gsymbol *gList=NULL, *temp=NULL;
+Gsymbol *gList=NULL, *gt = NULL;
+Lsymbol *llist=NULL, *lt = NULL;
 
 void prefix(struct Tnode*);
 void postfix(struct Tnode*);
+Gsymbol *Glookup(char*);
+Lsymbol *Llookup(char*);
+void Ginstall(char*, int, int);
+void Linstall(char*, int);
+
 %}
 
 %union {
 	struct Tnode *n;
 }
 
+%token LP RP SC CM INTEGER BOOLEAN DECL ENDDECL BEG END MAIN
+%token READ WRITE VAR EQ
 %token NUM OP1 OP2 OP3 OP4
-%type<n> start expr OP1 OP2 OP3 OP4 NUM
-%left OP1 OP2//'+' '-'
+%type <n> expr OP1 OP2 OP3 OP4 NUM
+%left OP1 OP2 //'+' '-'
 %left OP3 OP4 //'*' '/'
-%left '('
+%right '='
+
+
 
 %%
 
@@ -33,15 +43,27 @@ start: expr'\n'		{
 					return(0);
 				};
 
-expr:	 expr OP4 expr
-		|expr OP3 expr
-		|expr OP2 expr
-		|expr OP1 expr		{
+expr:	 expr OP4 expr	{
 					$$=$2;
-					$$->left=$1;
-					$$->right=$3;
+					$$->Ptr2=$1;
+					$$->Ptr3=$3;
 				}
-		|'('expr')'		{	$$=$2; }
+		|expr OP3 expr	{
+					$$=$2;
+					$$->Ptr2=$1;
+					$$->Ptr3=$3;
+				}
+		|expr OP2 expr	{
+					$$=$2;
+					$$->Ptr2=$1;
+					$$->Ptr3=$3;
+				}
+		|expr OP1 expr	{
+					$$=$2;
+					$$->Ptr2=$1;
+					$$->Ptr3=$3;
+				}
+		|LP expr RP		{	$$=$2; }
 		|NUM			{	$$=$1; }
 		;
 %%
@@ -62,8 +84,8 @@ void prefix(struct Tnode* root) {
 			case 3 :	printf("%c",'*'); break;
 			case 4 :	printf("%c",'/'); break;
 		}
-		prefix(root->left);
-		prefix(root->right);
+		prefix(root->Ptr2);
+		prefix(root->Ptr3);
 	}
 }
 
@@ -71,8 +93,8 @@ void postfix(struct Tnode* root) {
 	if(root==NULL) {
 		return;
 	} else {
-		postfix(root->left);
-		postfix(root->right);
+		postfix(root->Ptr2);
+		postfix(root->Ptr3);
 		switch(root->NODETYPE ) {
 			case 0 :	printf("%d",root->VALUE); break;
 			case 1 :	printf("%c",'+'); break;
@@ -83,22 +105,46 @@ void postfix(struct Tnode* root) {
 	}
 }
 
-int eval(struct Tnode* root) {
-	if(root==NULL) {
+int	eval(struct Tnode* root) {
+	if (root == NULL ) {
+		printf("\nTree root is NULL");
 		return;
 	} else {
-		switch(root->NODETYPE ) {
+		if(root->TYPE==0	&&	root->NODETYPE==0)	/* if number/variable */ {
+			if(root->NAME)	{
+				lt	=	Llookup(root->NAME);
+				gt	=	Glookup(root->NAME);
+				if(lt)	{
+					return	*(lt->BINDING);
+				}
+				if(gt)	{
+					if(root->Ptr1)	{//if there is an array index
+						return	*(gt->BINDING+sizeof(int)*root->Ptr1->VALUE);
+					}
+					else {
+						return	*(gt->BINDING);
+					}
+				} else	{
+					printf("Wrong identifier '%s' used\n", root->NAME);
+					exit(0);
+				}
+			} else
+				return	root->VALUE;
+		}
+
+		switch(root->NODETYPE)	{
 			case 0 :	return(root->VALUE); break;
-			case 1 :	return (eval(root->left) + eval(root->right)); break;
-			case 2 :	return (eval(root->left) - eval(root->right)); break;
-			case 3 :	return (eval(root->left) * eval(root->right)); break;
-			case 4 :	return (eval(root->left) / eval(root->right)); break;
+			case 1 :	return (eval(root->Ptr2) + eval(root->Ptr3)); break;
+			case 2 :	return (eval(root->Ptr2) - eval(root->Ptr3)); break;
+			case 3 :	return (eval(root->Ptr2) * eval(root->Ptr3)); break;
+			case 4 :	return (eval(root->Ptr2) / eval(root->Ptr3)); break;
 		}
 	}
 }
 
+
 Gsymbol *Glookup(char *NAME) {			// Look up for a global identifier
-	temp = gList;
+	Gsymbol *temp = gList;
 	do {
 		if(strcmp(temp->NAME, NAME)==0) {
 			return temp;
@@ -108,14 +154,34 @@ Gsymbol *Glookup(char *NAME) {			// Look up for a global identifier
 }
 
 void Ginstall(char *NAME, int TYPE, int SIZE) {	// Installation
-	Gsymbol *t;
-	t = (Gsymbol *)malloc(sizeof(Gsymbol));
-	t->NAME = NAME;
-	t->TYPE = TYPE;
-	t->BINDING = malloc(sizeof(int)*SIZE);
-	t->NEXT = gList;
-	gList = t;
+	Gsymbol *temp;
+	temp = (Gsymbol *)malloc(sizeof(Gsymbol));
+	temp->NAME = NAME;
+	temp->TYPE = TYPE;
+	temp->BINDING = malloc(sizeof(int)*SIZE);
+	temp->NEXT = gList;
+	gList = temp;
 }
+
+Lsymbol *Llookup(char *NAME)	{	// Look up for a local identifier
+	Lsymbol *temp = llist;
+	do	{
+		if(strcmp(temp->NAME,	NAME)==0) {
+			return	temp;
+		}
+	} while(temp = temp->NEXT);
+	return	NULL;
+}
+
+void Linstall(char *NAME, int TYPE) { // Installation
+	Lsymbol *temp = (Lsymbol *)malloc(sizeof(Lsymbol));
+	temp->NAME = NAME;
+	temp->TYPE = TYPE;
+	temp->BINDING = malloc(sizeof(int));
+	temp->NEXT = llist;
+	llist = temp;
+}
+
 
 int yyerror (char *msg) {
 	return fprintf (stderr, "YACC: %s\n", msg);
