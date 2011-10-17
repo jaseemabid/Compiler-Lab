@@ -366,7 +366,7 @@ Stmt:		READ '(' ID '[' expr ']' ')'			{
 								
 								}
 								
-		|IF '(' expr ')' THEN StmtList endif		{	
+		|IF '(' expr ')' THEN StmtList ENDIF		{	
 									checktype($3,$1,NULL);
 									$1->Ptr1=$3;
 									$1->Ptr2=$6;
