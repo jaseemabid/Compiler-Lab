@@ -1,6 +1,7 @@
 all :
-	yacc -d sym.y
-	lex sym.l
+	clear
+	yacc -d sil.y
+	lex sil.l
 	cc y.tab.c lex.yy.c  -o compiler.out
-	./compiler.out # Run the compiled code.
+	./compiler.out < sample.sil # Run the compiled code.
 
