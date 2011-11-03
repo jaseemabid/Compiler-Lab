@@ -3,6 +3,17 @@
 #include <stdlib.h>
 #include "def.h"
 
+struct Tnode* TreeCreate_(int TYPE, int NODETYPE, int VALUE, char* NAME, struct Tnode *Ptr1, struct Tnode *Ptr2, struct Tnode *Ptr3) {
+	struct Tnode* temp=malloc(sizeof(struct Tnode));
+	temp->TYPE		=	TYPE;
+	temp->NODETYPE	=	NODETYPE;
+	temp->VALUE		=	VALUE;
+	temp->Ptr1		=	Ptr1; // unk
+	temp->Ptr2		=	Ptr2; // left
+	temp->Ptr2		=	Ptr3; // right
+	return temp;
+}
+
 int ch;
 Gsymbol *gList=NULL, *gt = NULL;
 Lsymbol *llist=NULL, *lt = NULL;
@@ -11,8 +22,8 @@ void prefix(struct Tnode*);
 void postfix(struct Tnode*);
 Gsymbol *Glookup(char*);
 Lsymbol *Llookup(char*);
-void Ginstall(char*, int, int);
-void Linstall(char*, int);
+void Ginsert(char*, int, int);
+void Linsert(char*, int);
 
 %}
 
@@ -22,50 +33,113 @@ void Linstall(char*, int);
 
 %token LP RP SC CM INTEGER BOOLEAN DECL ENDDECL BEG END MAIN
 %token READ WRITE VAR EQ
-%token NUM OP1 OP2 OP3 OP4
-%type <n> expr OP1 OP2 OP3 OP4 NUM
+%token OP1 OP2 OP3 OP4
 %left OP1 OP2 //'+' '-'
 %left OP3 OP4 //'*' '/'
-%right '='
+%right EQ
 
+
+%type <n> VAR sList stmt READ WRITE expr EQ OP1 OP2 OP3 OP4 INTEGER
 
 
 %%
 
-start: expr'\n'		{
-					printf("\n1.Prefix expression\t2.Postfix expression.\t3. Eval Enter (1/2/3) : ");
-					scanf("%d",&ch);
-					switch(ch) {
-						case 1:printf("\nPrefix expression : \t");prefix($1); printf("\n\n"); break;
-						case 2:printf("\nPostfix expression : \t");postfix($1); printf("\n\n"); break;
-						case 3:printf("\nEval expression : %d\t",eval($1)); printf("\n\n"); break;
-					}
-					return(0);
+program:		GdeclBlock MainBlock;
+
+GdeclBlock:		DECL GdeclList ENDDECL;
+
+GdeclList:		GdeclList Gdecl | Gdecl;
+
+Gdecl:		Type GvarList SC;
+
+GvarList:		GvarList CM Gvar | Gvar;
+
+Gvar:		VAR {
+				Ginsert($1 - > NAME, $1 - > TYPE, 1);
+			}
+			| VAR '[' INTEGER ']' {
+				Ginsert($1 - > NAME, $1 - > TYPE, $3 - > VALUE);
+			};
+
+MainBlock:		INTEGER MAIN LP RP LdeclBlock sBlock | INTEGER MAIN LP RP sBlock;
+
+LdeclBlock:		DECL LdeclList ENDDECL;
+
+LdeclList:		LdeclList Ldecl | Ldecl;
+
+Ldecl:			Type LvarList SC;
+
+LvarList:		LvarList CM VAR {
+					Linsert($3 - > NAME, $3 - > TYPE);
+				}
+				| VAR {
+					Linsert($1 - > NAME, $1 - > TYPE);
 				};
 
-expr:	 expr OP4 expr	{
-					$$=$2;
-					$$->Ptr2=$1;
-					$$->Ptr3=$3;
-				}
-		|expr OP3 expr	{
-					$$=$2;
-					$$->Ptr2=$1;
-					$$->Ptr3=$3;
-				}
-		|expr OP2 expr	{
-					$$=$2;
-					$$->Ptr2=$1;
-					$$->Ptr3=$3;
-				}
-		|expr OP1 expr	{
-					$$=$2;
-					$$->Ptr2=$1;
-					$$->Ptr3=$3;
-				}
-		|LP expr RP		{	$$=$2; }
-		|NUM			{	$$=$1; }
-		;
+Type:		INTEGER | BOOLEAN;
+
+sBlock:		BEG sList END {
+	eval($2);
+};
+
+sList:		sList stmt SC {
+				$$ = TreeCreate_(3, 0, 0, NULL, $1, $2, NULL); /* Fix this */
+			}
+			| stmt SC {
+				$$ = TreeCreate_(3, 0, 0, NULL, NULL, $1, NULL);
+			};
+
+stmt:		READ LP VAR RP {
+				$1 - > Ptr1 = $3;
+				$$ = $1;
+			}
+			| READ LP VAR '[' INTEGER ']' RP {
+				$1 - > Ptr1 = $3;
+				$3 - > Ptr1 = $5;
+				$$ = $1;
+			}
+			| WRITE LP expr RP {
+				$1 - > Ptr1 = $3;
+				$$ = $1;
+			}
+			| VAR EQ expr {
+				$2 - > Ptr1 = $1;
+				$2 - > Ptr2 = $3;
+				$$ = $2;
+			}
+			| VAR '[' INTEGER ']' EQ expr {
+				$5 - > Ptr1 = $1;
+				$5 - > Ptr2 = $6;
+				$1 - > Ptr1 = $3;
+				$$ = $5;
+			};
+
+expr:		expr OP4 expr {
+				$$ = $2;
+				$$ - > Ptr2 = $1;
+				$$ - > Ptr3 = $3;
+			}
+			| expr OP3 expr {
+				$$ = $2;
+				$$ - > Ptr2 = $1;
+				$$ - > Ptr3 = $3;
+			}
+			| expr OP2 expr {
+				$$ = $2;
+				$$ - > Ptr2 = $1;
+				$$ - > Ptr3 = $3;
+			}
+			| expr OP1 expr {
+				$$ = $2;
+				$$ - > Ptr2 = $1;
+				$$ - > Ptr3 = $3;
+			}
+			| LP expr RP {
+				$$ = $2;
+			}
+			| INTEGER {
+				$$ = $1;
+			};
 %%
 
 int main (void) {
@@ -110,10 +184,10 @@ int	eval(struct Tnode* root) {
 		printf("\nTree root is NULL");
 		return;
 	} else {
-		if(root->TYPE==0	&&	root->NODETYPE==0)	/* if number/variable */ {
+		if(root->TYPE==0	&&	root->NODETYPE==0)	/* if INTEGER/variable */ {
 			if(root->NAME)	{
-				lt	=	Llookup(root->NAME);
-				gt	=	Glookup(root->NAME);
+				lt = Llookup(root->NAME);
+				gt = Glookup(root->NAME);
 				if(lt)	{
 					return	*(lt->BINDING);
 				}
@@ -153,7 +227,7 @@ Gsymbol *Glookup(char *NAME) {			// Look up for a global identifier
 	return NULL;
 }
 
-void Ginstall(char *NAME, int TYPE, int SIZE) {	// Installation
+void Ginsert(char *NAME, int TYPE, int SIZE) {	// Installation
 	Gsymbol *temp;
 	temp = (Gsymbol *)malloc(sizeof(Gsymbol));
 	temp->NAME = NAME;
@@ -173,7 +247,7 @@ Lsymbol *Llookup(char *NAME)	{	// Look up for a local identifier
 	return	NULL;
 }
 
-void Linstall(char *NAME, int TYPE) { // Installation
+void Linsert(char *NAME, int TYPE) { // Installation
 	Lsymbol *temp = (Lsymbol *)malloc(sizeof(Lsymbol));
 	temp->NAME = NAME;
 	temp->TYPE = TYPE;
@@ -184,6 +258,6 @@ void Linstall(char *NAME, int TYPE) { // Installation
 
 
 int yyerror (char *msg) {
-	return fprintf (stderr, "YACC: %s\n", msg);
+	return fprintf (stderr, "YACC:	%s\n", msg);
 }
 
