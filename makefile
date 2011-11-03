@@ -5,3 +5,4 @@ all :
 	cc y.tab.c lex.yy.c  -o compiler.out
 	./compiler.out < sample.sil # Run the compiled code.
 
+
