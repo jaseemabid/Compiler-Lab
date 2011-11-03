@@ -3,6 +3,7 @@
 #include "y.tab.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "def.h"
 
 struct Tnode* TreeCreate(int TYPE, int NODETYPE, int VALUE, char* NAME, struct Tnode *Ptr1, struct Tnode *Ptr2, struct Tnode *Ptr3) {
@@ -10,9 +11,9 @@ struct Tnode* TreeCreate(int TYPE, int NODETYPE, int VALUE, char* NAME, struct T
 	temp->TYPE		=	TYPE;
 	temp->NODETYPE	=	NODETYPE;
 	temp->VALUE		=	VALUE;
-	temp->Ptr1	=	Ptr1;
-	temp->Ptr2	=	Ptr2;
-	temp->Ptr2	=	Ptr3;
+	temp->Ptr1		=	Ptr1; // unk
+	temp->Ptr2		=	Ptr2; // left
+	temp->Ptr2		=	Ptr3; // right
 	return temp;
 }
 
@@ -25,58 +26,63 @@ int yywrap(void) {
 
 %%
 
-[0-9]+	{	yylval.n =	TreeCreate(1, 0, atoi(yytext), NULL, NULL, NULL, NULL);
-			return NUM;
-		}
+[0-9]+		{	yylval.n = TreeCreate(1, 0, atoi(yytext), NULL, NULL, NULL, NULL);
+			return INTEGER; }
 
-[\+]		{	yylval.n = TreeCreate(1, 1,555, NULL, NULL, NULL, NULL);
-			return OP1;
-		}
+true {
+					char *s = malloc(yyleng);
+					strcpy(s, yytext);
+					yylval.n = TreeCreate(2, 0, 0, s, NULL, NULL, NULL);
+					return BOOLEAN; }
 
-[\-]		{	yylval.n = TreeCreate(1, 2,555, NULL, NULL, NULL, NULL);
-			printf("minus");
-			return OP2;
-		}
+false {
+					char *s = malloc(yyleng);
+					strcpy(s, yytext);
+					yylval.n = TreeCreate(2, 0, 0, s, NULL, NULL, NULL);
+					return BOOLEAN; }
 
-[\*]		{	yylval.n = TreeCreate(1, 3,555, NULL, NULL, NULL, NULL);
-			return OP3;
-		}
 
-[\/]		{	yylval.n = TreeCreate(1, 4,555, NULL, NULL, NULL, NULL);
-			return OP4;
-		}
+"+"		{	yylval.n = TreeCreate(1, 1, 0, NULL, NULL, NULL, NULL);
+			return OP1; }
 
-"read"			{	yylval.n = TreeCreate(3, 'r', 555, NULL, NULL, NULL, NULL);
-					return READ;
-				}
+"-"		{	yylval.n = TreeCreate(1, 2, 0, NULL, NULL, NULL, NULL);
+			return OP2; }
 
-"write"			{	yylval.n = TreeCreate(3, 'w', 555, NULL, NULL, NULL, NULL);
-					return WRITE;
-				}
+"*"		{	yylval.n = TreeCreate(1, 3, 0, NULL, NULL, NULL, NULL);
+			return OP3; }
 
-"decl"			{	return DECL;}
+"/"		{	yylval.n = TreeCreate(1, 4, 0, NULL, NULL, NULL, NULL);
+			return OP4; }
 
-"enddecl"		{	return ENDDECL;}
+"read"		{	yylval.n = TreeCreate(3,'r', 0, NULL, NULL, NULL, NULL);
+				return READ;}
 
-"integer"		{	return INTEGER;}
+"write"		{	yylval.n = TreeCreate(3,'w', 0, NULL, NULL, NULL, NULL);
+				return WRITE;}
 
-"boolean"		{	return BOOLEAN;}
+"decl"		{	return DECL;}
 
-"main"			{	return MAIN;}
+"enddecl"	{	return ENDDECL;}
 
-"begin"			{	return BEG;}
+"integer"	{	return INTEGER;}
 
-"end"			{	return END;}
+"boolean"	{	return BOOLEAN;}
 
-=				{
-					yylval.n = TreeCreate(3, '=', 555, NULL, NULL, NULL, NULL);
-					return EQ;
-				}
+"main"		{	return MAIN;}
+
+"begin"		{	return BEG;}
+
+"end"		{	return END;}
+
+"="			{
+				yylval.n = TreeCreate(3, '=', 0, NULL, NULL, NULL, NULL);
+				return EQ;
+			}
 
 [a-zA-Z][a-zA-Z0-9]*	{
 					char *s = malloc(yyleng);
 					strcpy(s, yytext);
-					yylval.n = TreeCreate(3, 0, 555, s, NULL, NULL, NULL);
+					yylval.n = TreeCreate(3, 0, 0, s, NULL, NULL, NULL);
 					return VAR;
 				}
 
@@ -84,18 +90,20 @@ int yywrap(void) {
 
 "]"			{	return *yytext;}
 
-\(			{	return LP;}
+"("			{	return LP;}
 
-\)			{	return RP;}
+")"			{	return RP;}
 
-\;			{	return SC;}
+";"			{	return SC;}
 
-,			{	return CM;}
+","			{	return CM;}
 
 [\n]		{	return *yytext;}
 
 .			{
-				yyerror("Invalid character"); exit(0); 
+				yyerror("Invalid character");
+				exit(0); 
 			}
+
 
 %%
