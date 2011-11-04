@@ -19,6 +19,11 @@ gsymbol *glast = NULL;
 
 int vartype;
 
+int regcount = 0;
+int adrcount = 0;
+int ifcount = 0;
+int whilecount = 0;
+
 int traverse(tnode *);
 void checktype(tnode *,tnode *,tnode *);
 
