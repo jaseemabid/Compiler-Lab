@@ -4,6 +4,7 @@ docs/
 *.yy.c
 *.tab.c
 *.tab.h
-test.c
+*.S
+test.*
 temp.*
-sim.S
+
