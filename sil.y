@@ -455,8 +455,11 @@ RetStmt:	RETURN expr ';' {
 			};
 %%
 
-int main (void) {	
-	printf("\nEnter expression : ");
+int main (void) {
+	FILE *fp;
+	fp = fopen("sim.S","w");
+	fprintf(fp,"START\n");
+	fclose(fp);
 	return yyparse();
 }
 
