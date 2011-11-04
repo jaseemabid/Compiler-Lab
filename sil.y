@@ -55,7 +55,19 @@ void checktype(tnode *,tnode *,tnode *);
 %%
 
 Prog:		GDefblock Mainblock {
-				return (traverse($2));
+				traverse($2); 
+				FILE *fp;
+				fp=fopen("sim.S","a");
+				fprintf(fp,"HALT\n");
+				fclose(fp);	
+				exit(1); 
+			}
+			| Mainblock			{
+				traverse($1);
+				FILE *fp;
+				fp=fopen("sim.S","a");
+				fprintf(fp,"HALT\n");
+				fclose(fp);
 			};
 
 GDefblock:	DECL GDefList ENDDECL;
