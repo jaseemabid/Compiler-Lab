@@ -1,3 +1,5 @@
-Networks lab programming codes by Jaseem Abid
-Semster 5, NIT Calicut
-
+'Simple Integer Language' Compiler written in C, lex and yacc.
+Author : Jaseem Abid <jaseemabid@gmail.com>
+Semster 5, NIT Calicut.
+License : GPL V3
+About SIL : http://athena.nitc.ac.in/~kmurali/Compiler/
