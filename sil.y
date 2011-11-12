@@ -36,6 +36,7 @@ gsymbol *Glookup(char *);
 void Ginstall(char *,int,int);
 void checktype(tnode *,tnode *,tnode *);
 
+FILE *fp;
 
 %}
 %union {
@@ -56,18 +57,9 @@ void checktype(tnode *,tnode *,tnode *);
 
 Prog:		GDefblock Mainblock {
 				traverse($2);
-				FILE *fp;
-				fp=fopen("sim.S","a");
-				fprintf(fp,"HALT\n");
-				fclose(fp);
-				exit(1);
 			}
 			| Mainblock			{
 				traverse($1);
-				FILE *fp;
-				fp=fopen("sim.S","a");
-				fprintf(fp,"HALT\n");
-				fclose(fp);
 			};
 
 GDefblock:	DECL GDefList ENDDECL;
@@ -424,11 +416,11 @@ RetStmt:	RETURN expr ';' {
 %%
 
 int main (void) {
-	FILE *fp;
 	fp = fopen("sim.S","w");
 	fprintf(fp,"START\n");
+	yyparse();
+	fprintf(fp,"HALT\n");
 	fclose(fp);
-	return yyparse();
 }
 
 int yyerror (char *msg) {
@@ -704,8 +696,6 @@ void Linstall(char *name,int type) {
 
 int traverse(tnode *temp) {
 
-	FILE *fp;
-	fp=fopen("sim.S","a");
 	int val,arr;
 	int *ptr;
 	if(temp) {
@@ -792,7 +782,7 @@ int traverse(tnode *temp) {
 			case INT_TYPE		:
 				switch(temp->NODETYPE) {
 				case NUMBER_NODETYPE:
-							fprintf(fp,"\\ Some number\n");
+							fprintf(fp,"Some number\n");
 							break;
 				case PLUS_NODETYPE	:
 							fprintf(fp,"ADD\n");
