@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include "sil.h"
 
+#define OutFile "sim.S"
+
 int yylex(void);
 int yyerror(char *);
 
@@ -379,11 +381,11 @@ RetStmt:	RETURN	expr ';'				{	typecheck($2,$1,NULL);			}
 %%
 
 int main (void) {
-	fp = fopen("sim.S","w");
+	fp = fopen(OutFile,"w");
 	fprintf(fp,"START");
 	fclose(fp);
 	yyparse();
-	fp = fopen("sim.S","a");
+	fp = fopen(OutFile,"a");
 	fprintf(fp,"\nHALT");
 	fclose(fp);
 	return 0;
@@ -736,7 +738,7 @@ int evaltree(tnode *temp)	{
 					case READ_NODETYPE : 
 								//printf("\nEnter value : ");
 								//scanf("%d",&val);
-								fp = fopen("sim.S","a"); 
+								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nIN R%d",regcount);
 								fclose(fp);
 								regcount++;
@@ -745,13 +747,13 @@ int evaltree(tnode *temp)	{
 										//arr = evaltree(temp->Ptr1->Ptr1);
 										//arr = temp->Ptr1->Ptr1->VALUE;
 										//ptr = temp->Ptr1->Gentry->BINDING;
-										fp = fopen("sim.S","a"); 
+										fp = fopen(OutFile,"a"); 
 										fprintf(fp, "\nMOV R%d, %d",regcount, *(temp->Ptr1->Gentry->BINDING));
 										fclose(fp);
 										regcount++;
 										evaltree(temp->Ptr1->Ptr1);
 										// THE LAST REGISTER WOULD CONTAIN ARRAY INDEX
-										fp = fopen("sim.S","a"); 
+										fp = fopen(OutFile,"a"); 
 										fprintf(fp, "\nADD R%d, R%d",regcount-2,regcount-1);
 										fclose(fp);
 										regcount--;
@@ -759,7 +761,7 @@ int evaltree(tnode *temp)	{
 										//*ptr = val;
 									}
 									else	{
-										fp = fopen("sim.S","a"); 
+										fp = fopen(OutFile,"a"); 
 										fprintf(fp, "\nMOV R%d, %d", regcount, *(temp->Ptr1->Gentry->BINDING));
 										fclose(fp);
 										regcount++;
@@ -767,7 +769,7 @@ int evaltree(tnode *temp)	{
 									}
 								}
 								else if(temp->Ptr1->Lentry)	{
-									fp = fopen("sim.S","a"); 
+									fp = fopen(OutFile,"a"); 
 									fprintf(fp, "\nMOV R%d, %d", regcount, *(temp->Ptr1->Lentry->BINDING));
 									fclose(fp);
 									regcount++;
@@ -776,7 +778,7 @@ int evaltree(tnode *temp)	{
 								else
 									fprintf(fp, "\nNo memory allocated for var");
 								//temp->Ptr1->VALUE = val;
-								fp = fopen("sim.S","a"); 
+								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nMOV [R%d], R%d",regcount-1, regcount-2);
 								fclose(fp);
 								regcount = regcount-2;
@@ -784,7 +786,7 @@ int evaltree(tnode *temp)	{
 					case WRITE_NODETYPE:
 								//printf("\n%d",evaltree(temp->Ptr1));
 								evaltree(temp->Ptr1);
-								fp = fopen("sim.S","a"); 
+								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nOUT R%d",regcount-1);
 								fclose(fp);
 								regcount--;
@@ -802,13 +804,13 @@ int evaltree(tnode *temp)	{
 										*/
 										//ptr = temp->Gentry->BINDING;
 										//arr = temp->Ptr1->VALUE;
-										fp = fopen("sim.S","a"); 
+										fp = fopen(OutFile,"a"); 
 										fprintf(fp, "\nMOV R%d, %d",regcount, *(temp->Gentry->BINDING));
 										fclose(fp);
 										regcount++;
 										evaltree(temp->Ptr1);
 										// now regcount-1 stores the array index
-										fp = fopen("sim.S","a"); 
+										fp = fopen(OutFile,"a"); 
 										fprintf(fp, "\nADD R%d, R%d",regcount-2,regcount-1);
 										fclose(fp);
 										regcount--;
@@ -816,7 +818,7 @@ int evaltree(tnode *temp)	{
 									}
 									else	{
 										//ptr = temp->Gentry->BINDING;
-										fp = fopen("sim.S","a"); 
+										fp = fopen(OutFile,"a"); 
 										fprintf(fp, "\nMOV R%d, %d", regcount, *(temp->Gentry->BINDING));
 										fclose(fp);
 										regcount++;
@@ -824,7 +826,7 @@ int evaltree(tnode *temp)	{
 								}
 								else if(temp->Lentry)	{
 									//ptr = temp->Lentry->BINDING;
-									fp = fopen("sim.S","a"); 
+									fp = fopen(OutFile,"a"); 
 									fprintf(fp, "\nMOV R%d, %d", regcount, *(temp->Lentry->BINDING));
 									fclose(fp);
 									regcount++;
@@ -833,11 +835,11 @@ int evaltree(tnode *temp)	{
 									printf("\nNo memory allocated for var");
 								//return(*ptr);
 								//temp->VALUE = *ptr;
-								fp = fopen("sim.S","a"); 
+								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nMOV R%d, R%d", regcount, regcount-1);
 								fclose(fp);								 
 								regcount++;
-								fp = fopen("sim.S","a"); 
+								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nMOV R%d, [R%d]", regcount-2, regcount-1);
 								fclose(fp);								 
 								regcount--;
@@ -855,20 +857,20 @@ int evaltree(tnode *temp)	{
 								evaltree(temp->Ptr1);
 								label = label + 2;
 								temp_label = label;
-								fp = fopen("sim.S","a"); 
+								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nJZ R%d, LABEL%d",regcount-1,temp_label-2);
 								fclose(fp);								 
 								regcount--;
 								evaltree(temp->Ptr2);
-								fp = fopen("sim.S","a"); 
+								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nJMP LABEL%d",temp_label-1);
 								fclose(fp);								 
-								fp = fopen("sim.S","a"); 
+								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nLABEL%d:",temp_label-2);
 								fclose(fp);								 
 								label++;
 								evaltree(temp->Ptr3);
-								fp = fopen("sim.S","a"); 
+								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nLABEL%d:",temp_label-1);
 								fclose(fp);								 
 								label++;
@@ -881,25 +883,25 @@ int evaltree(tnode *temp)	{
 									//evaltree(temp->Ptr1);
 								}
 								*/
-								fp = fopen("sim.S","a"); 
+								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nLABEL%d:",label);
 								fclose(fp);								 
 								label=label+2;
 								temp_label = label-1;
 								evaltree(temp->Ptr1);
-								fp = fopen("sim.S","a"); 
+								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nJZ R%d, LABEL%d",regcount-1, temp_label);
 								fclose(fp);								 
 								regcount--;
 								evaltree(temp->Ptr2);
-								fp = fopen("sim.S","a"); 
+								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nJMP LABEL%d",temp_label-1);
 								fclose(fp);								 
-								fp = fopen("sim.S","a"); 
+								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nLABEL%d:", temp_label);
 								fclose(fp);								 
 								break;
-					case RETURN_NODETYPE :	fp = fopen("sim.S","a"); 
+					case RETURN_NODETYPE :	fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\n");
 								fclose(fp);								 
 								//return evaltree(temp->Ptr1);
@@ -909,7 +911,7 @@ int evaltree(tnode *temp)	{
 			case INT_TYPE		: 
 				switch(temp->NODETYPE)	{
 				case NUMBER_NODETYPE: 	//return(temp->VALUE);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOV R%d, %d",regcount, temp->VALUE);
 							fclose(fp);								 
 							regcount++;
@@ -918,7 +920,7 @@ int evaltree(tnode *temp)	{
 							//temp->VALUE=temp->Ptr1->VALUE + temp->Ptr2->VALUE;
 							evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nADD R%d, R%d", regcount-2, regcount-1);
 							fclose(fp);								 
 							regcount--;
@@ -927,7 +929,7 @@ int evaltree(tnode *temp)	{
 							//temp->VALUE=temp->Ptr1->VALUE - temp->Ptr2->VALUE;
 							evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nSUB R%d, R%d", regcount-2, regcount-1);
 							fclose(fp);								 
 							regcount--;
@@ -936,14 +938,14 @@ int evaltree(tnode *temp)	{
 							//temp->VALUE=temp->Ptr1->VALUE * temp->Ptr2->VALUE;
 							evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMUL R%d, R%d", regcount-2, regcount-1);
 							fclose(fp);								 
 							regcount--;
 							break;
 				case DIV_NODETYPE	 : 	evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nDIV R%d, R%d", regcount-2, regcount-1);
 							fclose(fp);								 
 							regcount--;
@@ -953,7 +955,7 @@ int evaltree(tnode *temp)	{
 				case ASSIGN_NODETYPE:
 							if(temp->Ptr1->Lentry)	{
 								//*(temp->Ptr1->Lentry->BINDING) = evaltree(temp->Ptr2);
-								fp = fopen("sim.S","a"); 
+								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nMOV R%d, %d", regcount, *(temp->Ptr1->Lentry->BINDING));
 								fclose(fp);								 
 								regcount++;
@@ -963,12 +965,12 @@ int evaltree(tnode *temp)	{
 								if((temp->Ptr1->Gentry->SIZE)>1)	{
 									//ptr = temp->Ptr1->Gentry->BINDING;
 									//ptr = ptr + evaltree(temp->Ptr1->Ptr1);
-									fp = fopen("sim.S","a"); 
+									fp = fopen(OutFile,"a"); 
 									fprintf(fp, "\nMOV R%d, %d", regcount, *(temp->Ptr1->Gentry->BINDING));
 									fclose(fp);								 
 									regcount++;
 									evaltree(temp->Ptr1->Ptr1);
-									fp = fopen("sim.S","a"); 
+									fp = fopen(OutFile,"a"); 
 									fprintf(fp, "\nADD R%d, R%d", regcount-2, regcount-1);
 									fclose(fp);								 
 									regcount--;
@@ -977,7 +979,7 @@ int evaltree(tnode *temp)	{
 								}
 								else	{
 									//*(temp->Ptr1->Gentry->BINDING) = evaltree(temp->Ptr2);
-									fp = fopen("sim.S","a"); 
+									fp = fopen(OutFile,"a"); 
 									fprintf(fp, "\nMOV R%d, %d", regcount, *(temp->Ptr1->Gentry->BINDING));
 									fclose(fp);								 
 									regcount++;
@@ -985,7 +987,7 @@ int evaltree(tnode *temp)	{
 								}
 							}
 							evaltree(temp->Ptr2);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOV [R%d], R%d", regcount-2, regcount-1);
 							fclose(fp);								 
 							regcount = regcount - 2;
@@ -994,7 +996,7 @@ int evaltree(tnode *temp)	{
 							//temp->VALUE=temp->Ptr1->VALUE % temp->Ptr2->VALUE;
 							evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOD R%d, R%d", regcount-2, regcount-1);
 							fclose(fp);								 
 							regcount--;
@@ -1005,18 +1007,18 @@ int evaltree(tnode *temp)	{
 				switch(temp->NODETYPE)	{
 				case NOT_NODETYPE:	//val = evaltree(temp->Ptr1);
 							evaltree(temp->Ptr1);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOV R%d, 1",regcount);
 							fclose(fp);								 
 							regcount++;
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOV R%d, 2",regcount);
 							fclose(fp);								 
 							regcount++;
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nADD R%d, R%d", regcount-3, regcount-2);
 							fclose(fp);								 
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOD R%d, R%d", regcount-3, regcount-1);
 							fclose(fp);								 
 							regcount = regcount -2 ;
@@ -1024,7 +1026,7 @@ int evaltree(tnode *temp)	{
 							break;
 				case LT_NODETYPE	:	evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nLT R%d, R%d", regcount-2, regcount-1);
 							fclose(fp);								 
 							regcount--;
@@ -1033,7 +1035,7 @@ int evaltree(tnode *temp)	{
 							break;
 				case LE_NODETYPE	:	evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nLE R%d, R%d", regcount-2, regcount-1);
 							fclose(fp);								 
 							regcount--;
@@ -1042,7 +1044,7 @@ int evaltree(tnode *temp)	{
 							break;
 				case GT_NODETYPE	:	evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nGT R%d, R%d", regcount-2, regcount-1);
 							fclose(fp);								 
 							regcount--;
@@ -1051,7 +1053,7 @@ int evaltree(tnode *temp)	{
 							break;
 				case GE_NODETYPE	:	evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nGE R%d, R%d", regcount-2, regcount-1);
 							fclose(fp);								 
 							regcount--;
@@ -1060,7 +1062,7 @@ int evaltree(tnode *temp)	{
 							break;
 				case EQ_NODETYPE	:	evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nEQ R%d, R%d", regcount-2, regcount-1);
 							fclose(fp);								 
 							regcount--;
@@ -1069,7 +1071,7 @@ int evaltree(tnode *temp)	{
 							break;
 				case NE_NODETYPE	:	evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nNE R%d, R%d", regcount-2, regcount-1);
 							fclose(fp);								 
 							regcount--;
@@ -1078,7 +1080,7 @@ int evaltree(tnode *temp)	{
 							break;
 				case AND_NODETYPE :	evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMUL R%d, R%d", regcount-2, regcount-1);
 							fclose(fp);								 
 							regcount--;
@@ -1088,27 +1090,27 @@ int evaltree(tnode *temp)	{
 				case OR_NODETYPE	:
 							evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOV R%d, 2", regcount);
 							fclose(fp);								 
 							regcount++;
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nADD R%d, R%d", regcount-3, regcount-2);
 							fclose(fp);								 
-							fp = fopen("sim.S","a"); 
+							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOD R%d, R%d", regcount-3, regcount-1);
 							fclose(fp);								 
 							regcount = regcount - 2;
 							//val=((evaltree(temp->Ptr1))||(evaltree(temp->Ptr2)))?1:0;
 							//return val;
 							break;
-				case TRUE_NODETYPE :		fp = fopen("sim.S","a"); 
+				case TRUE_NODETYPE :		fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOV R%d, %d", regcount, 1);
 							fclose(fp);								 
 							regcount++;
 							//return(1);
 							break;
-				case FALSE_NODETYPE:		fp = fopen("sim.S","a"); 
+				case FALSE_NODETYPE:		fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOV R%d, %d", regcount, 0);
 							fclose(fp);								 
 							regcount++;
