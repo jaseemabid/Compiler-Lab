@@ -45,7 +45,7 @@ FILE *fp;
 }
 
 %token CONST ID READ WRITE INTEGER GT GE LT LE EQ AND OR NE BOOLEAN TRUE FALSE IF THEN ELSE ENDIF WHILE DO ENDWHILE RETURN DECL ENDDECL BEGINING END MAIN	NOT
-%type <ptr> CONST ID '+'	'-'	'*' '/' '%' '=' READ WRITE Mainblock Stmt Body StmtList expr endif GT GE LT LE EQ AND OR NE TRUE FALSE IF WHILE RETURN NOT
+%type <ptr> CONST ID '+' '-' '*' '/' '%' '=' READ WRITE Mainblock Stmt Body StmtList expr endif GT GE LT LE EQ AND OR NE TRUE FALSE IF WHILE RETURN NOT
 
 %left OR
 %left AND
@@ -57,32 +57,32 @@ FILE *fp;
 
 %%
 
-Prog :		GDefblock Mainblock				{	return evaltree($2);	}
+Prog	:		GDefblock Mainblock			{ return evaltree($2); }
 		;
 
-GDefblock :	DECL GDefList ENDDECL
+GDefblock :		DECL GDefList ENDDECL
 		;
 
 GDefList :
-		|GDefList GDecl
+		 | GDefList GDecl
 		;
 
-GDecl :		Type GIdList	';'
+GDecl :		Type GIdList ';'
 		;
 
 GIdList :	GId 
 		|GIdList ',' GId 
 		;
 
-GId :		ID '[' CONST ']'					{	Ginstall($1->NAME,vartype,$3->VALUE);	}
-		|ID						{	Ginstall($1->NAME,vartype,1);		}
+GId :	ID '[' CONST ']'			{ Ginstall($1->NAME,vartype,$3->VALUE); }
+		|ID								{ Ginstall($1->NAME,vartype,1); }
 		;
 
-Type :		INTEGER						{	vartype = INT_VARTYPE;			}
-		|BOOLEAN					{		vartype = BOOL_VARTYPE;			}
+Type :	INTEGER						{ vartype = INT_VARTYPE; }
+		|BOOLEAN						{ 	vartype = BOOL_VARTYPE; }
 		;
 
-Mainblock :	INTEGER MAIN '(' ')' '{' LDefblock Body '}'		{	$$ = $7;				}
+Mainblock :	INTEGER MAIN '(' ')' '{' LDefblock Body '}'		{ $$ = $7; }
 		;
 
 LDefblock :	DECL LDefList ENDDECL
@@ -99,13 +99,13 @@ LIdList :	LId
 		|LIdList ',' LId 
 		;
 
-LId :		ID						{	Linstall($1->NAME,vartype);			}
+LId :	ID						{ Linstall($1->NAME,vartype); }
 		;
 
-Body :		BEGINING StmtList RetStmt END			{	$$ = $2;					} 
+Body :		BEGINING StmtList RetStmt END			{ $$ = $2;					} 
 		;
 
-StmtList :							{	$$ = NULL;				}
+StmtList :							{ $$ = NULL; }
 		| StmtList Stmt ';'				{
 									tnode *temp;
 									temp = treecreate(DUMMY_TYPE,DUMMY_NODETYPE,NULL,0,NULL,NULL,NULL,NULL);
@@ -170,20 +170,20 @@ expr :		NOT expr					{
 										$2->Ptr1=$1;$2->Ptr2=$3;
 										$$=$2;
 								}
-		|expr NE expr					{	typecheck($1,$2,$3);
+		|expr NE expr					{ typecheck($1,$2,$3);
 										$2->Ptr1=$1;$2->Ptr2=$3;
 										$$=$2;
 								}
-		|expr AND expr					{	typecheck($1,$2,$3);
+		|expr AND expr					{ typecheck($1,$2,$3);
 									$2->Ptr1=$1;$2->Ptr2=$3;
 										$$=$2;
 								}
-		|expr OR expr					{	typecheck($1,$2,$3);
+		|expr OR expr					{ typecheck($1,$2,$3);
 										$2->Ptr1=$1;$2->Ptr2=$3;
 										$$=$2;
 								}
-		|'(' expr ')'					{	$$=$2;					}
-		|CONST						{	$$=$1;					}
+		|'(' expr ')'					{ $$=$2;					}
+		|CONST						{ $$=$1;					}
 		| ID '[' expr ']'				{
 									gsymbol *gtemp;
 									gtemp = Glookup($1->NAME);
@@ -236,12 +236,12 @@ expr :		NOT expr					{
 									}
 									$$ = $1;
 								}
-		|TRUE						{	$$=$1;					}
-		|FALSE						{	$$=$1;					}
+		|TRUE						{ $$=$1;					}
+		|FALSE						{ $$=$1;					}
 		;
 
-endif :		ELSE StmtList ENDIF				{	$$=$2;					}
-		| ENDIF					{	$$=NULL;				}
+endif :		ELSE StmtList ENDIF				{ $$=$2;					}
+		| ENDIF					{ $$=NULL; }
 		;
 
 Stmt :		READ '(' ID '[' expr ']' ')'			{
@@ -393,7 +393,7 @@ Stmt :		READ '(' ID '[' expr ']' ')'			{
 								}
 		;
 
-RetStmt :	RETURN	expr ';'				{	typecheck($2,$1,NULL);			}
+RetStmt :	RETURN	expr ';'				{ typecheck($2,$1,NULL); }
 		;
 
 
