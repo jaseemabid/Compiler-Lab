@@ -14,7 +14,7 @@ typedef struct Tnode tnode;
 typedef struct Lsymbol lsymbol;
 typedef struct Gsymbol gsymbol;
 
-tnode	 *thead = NULL;
+tnode	*thead = NULL;
 
 lsymbol *lhead = NULL;
 lsymbol *llast = NULL;
@@ -69,17 +69,17 @@ GDecl:		Type GIdList	';'
 GIdList:	GId 
 		|GIdList ',' GId 
 		;
-GId:		ID '[' CONST ']'	 				{	Ginstall($1->NAME,vartype,$3->VALUE);	}
-		|ID						{ 	Ginstall($1->NAME,vartype,1);		}
+GId:		ID '[' CONST ']'					{	Ginstall($1->NAME,vartype,$3->VALUE);	}
+		|ID						{	Ginstall($1->NAME,vartype,1);		}
 		;
-Type:		INTEGER						{ 	vartype = INT_VARTYPE;			}
+Type:		INTEGER						{	vartype = INT_VARTYPE;			}
 		|BOOLEAN					{		vartype = BOOL_VARTYPE;			}
 		;
-Mainblock:	INTEGER MAIN '(' ')' '{' LDefblock Body '}'		 {	$$ = $7;				}
+Mainblock:	INTEGER MAIN '(' ')' '{' LDefblock Body '}'		{	$$ = $7;				}
 		;
-LDefblock: 	DECL LDefList ENDDECL
+LDefblock:	DECL LDefList ENDDECL
 		;
-LDefList:	 
+LDefList:
 		|LDefList LDecl ';'
 		;
 LDecl:		Type LIdList
@@ -89,9 +89,9 @@ LIdList:	LId
 		;
 LId:		ID						{	Linstall($1->NAME,vartype);			}
 		;
-Body : 		BEGINING StmtList RetStmt END			{	$$ = $2;					} 
+Body :		BEGINING StmtList RetStmt END			{	$$ = $2;					} 
 		;
-StmtList:	 						{	$$ = NULL;				}
+StmtList:							{	$$ = NULL;				}
 		| StmtList Stmt ';'				{
 									tnode *temp;
 									temp = treecreate(DUMMY_TYPE,DUMMY_NODETYPE,NULL,0,NULL,NULL,NULL,NULL);
@@ -100,7 +100,7 @@ StmtList:	 						{	$$ = NULL;				}
 										$$=temp;
 									}
 		;
-expr:	 	NOT expr					{
+expr:		NOT expr					{
 									typecheck($2,$1,NULL);
 									$1->Ptr1 = $2;
 									$$ = $1;
@@ -112,60 +112,60 @@ expr:	 	NOT expr					{
 								}
 		|expr '-' expr					{
 									typecheck($1,$2,$3);
-								 		$2->Ptr1=$1;$2->Ptr2=$3;
-								 		$$=$2;
+										$2->Ptr1=$1;$2->Ptr2=$3;
+										$$=$2;
 								}
 		|expr '*' expr					{
 									typecheck($1,$2,$3);
-								 		$2->Ptr1=$1;$2->Ptr2=$3;
-								 		$$=$2;
+										$2->Ptr1=$1;$2->Ptr2=$3;
+										$$=$2;
 								}
 		|expr '/' expr					{
 									typecheck($1,$2,$3);
-									 	$2->Ptr1=$1;$2->Ptr2=$3;
-								 		$$=$2;
+										$2->Ptr1=$1;$2->Ptr2=$3;
+										$$=$2;
 								}
 		|expr '%' expr					{
 									typecheck($1,$2,$3);
-									 	$2->Ptr1=$1;$2->Ptr2=$3;
-									 	$$=$2;
+										$2->Ptr1=$1;$2->Ptr2=$3;
+										$$=$2;
 								}
 		|expr LT expr					{
 									typecheck($1,$2,$3);
-								 		$2->Ptr1=$1;$2->Ptr2=$3;
+										$2->Ptr1=$1;$2->Ptr2=$3;
 										$$=$2;
 								}
 		|expr LE expr					{
 									typecheck($1,$2,$3);
-								 		$2->Ptr1=$1;$2->Ptr2=$3;
-								 		$$=$2;
+										$2->Ptr1=$1;$2->Ptr2=$3;
+										$$=$2;
 								}
 		|expr GT expr					{
 									typecheck($1,$2,$3);
-								 		$2->Ptr1=$1;$2->Ptr2=$3;
-								 		$$=$2;
+										$2->Ptr1=$1;$2->Ptr2=$3;
+										$$=$2;
 								}
 		|expr GE expr					{
 									typecheck($1,$2,$3);
-								 		$2->Ptr1=$1;$2->Ptr2=$3;
-								 		$$=$2;
+										$2->Ptr1=$1;$2->Ptr2=$3;
+										$$=$2;
 								}
 		|expr EQ expr					{
 									typecheck($1,$2,$3);
-									 	$2->Ptr1=$1;$2->Ptr2=$3;
-								 		$$=$2;
+										$2->Ptr1=$1;$2->Ptr2=$3;
+										$$=$2;
 								}
 		|expr NE expr					{	typecheck($1,$2,$3);
-								 		$2->Ptr1=$1;$2->Ptr2=$3;
-								 		$$=$2;
+										$2->Ptr1=$1;$2->Ptr2=$3;
+										$$=$2;
 								}
 		|expr AND expr					{	typecheck($1,$2,$3);
 									$2->Ptr1=$1;$2->Ptr2=$3;
-								 		$$=$2;
+										$$=$2;
 								}
 		|expr OR expr					{	typecheck($1,$2,$3);
-								 		$2->Ptr1=$1;$2->Ptr2=$3;
-								 		$$=$2;
+										$2->Ptr1=$1;$2->Ptr2=$3;
+										$$=$2;
 								}
 		|'(' expr ')'					{	$$=$2;					}
 		|CONST						{	$$=$1;					}
@@ -200,7 +200,7 @@ expr:	 	NOT expr					{
 									$$ = $1;
 								}
 		|ID						{
-								 lsymbol *ltemp;
+								lsymbol *ltemp;
 									gsymbol *gtemp;
 									ltemp = Llookup($1->NAME);
 									if(!ltemp)	{
@@ -224,8 +224,8 @@ expr:	 	NOT expr					{
 		|TRUE						{	$$=$1;					}
 		|FALSE						{	$$=$1;					}
 		;
-endif:		ELSE StmtList ENDIF 				{ 	$$=$2; 					}
-		| ENDIF 					{ 	$$=NULL; 				}
+endif:		ELSE StmtList ENDIF				{	$$=$2;					}
+		| ENDIF					{	$$=NULL;				}
 		;
 Stmt:		READ '(' ID '[' expr ']' ')'			{
 									gsymbol *gtemp;
@@ -271,7 +271,7 @@ Stmt:		READ '(' ID '[' expr ']' ')'			{
 											if(gtemp->TYPE!=INT_VARTYPE)	{
 												printf("ERR : Trying to read value for boolean variable %s \n",$3->NAME);
 												yyerror("");
-									 	 }
+										}
 										}
 										else	{
 											printf("\nYou have not declared %s ",$3->NAME);
@@ -323,7 +323,7 @@ Stmt:		READ '(' ID '[' expr ']' ')'			{
 								}
 		|ID '[' expr ']' '=' expr			{
 									gsymbol *gtemp;
-								 	gtemp = Glookup($1->NAME);
+									gtemp = Glookup($1->NAME);
 									if(gtemp)	{
 										$1->Gentry = gtemp;
 										if($3->TYPE==BOOLEAN_TYPE)
@@ -350,7 +350,7 @@ Stmt:		READ '(' ID '[' expr ']' ')'			{
 									$$ = $5;
 								}
 		|ID '=' expr					{
-								 lsymbol *ltemp;
+								lsymbol *ltemp;
 									gsymbol *gtemp;
 									ltemp = Llookup($1->NAME);
 									if(!ltemp)	{
@@ -424,9 +424,9 @@ void typecheck(tnode *t1,tnode *t2,tnode *t3) {
 	switch(t2->TYPE)	{
 		case INT_TYPE	:
 					switch(t2->NODETYPE)	{
-						case PLUS_NODETYPE	 :
+						case PLUS_NODETYPE	:
 						case MINUS_NODETYPE	:
-						case MULT_NODETYPE	 :
+						case MULT_NODETYPE	:
 						case DIV_NODETYPE		:
 						case MODULO_NODETYPE :
 									if((t1->TYPE==BOOLEAN_TYPE)||(t3->TYPE==BOOLEAN_TYPE))
@@ -510,136 +510,136 @@ void typecheck(tnode *t1,tnode *t2,tnode *t3) {
 						case GE_NODETYPE	:
 						case EQ_NODETYPE	:
 						case NE_NODETYPE	:
-										 if((t1->TYPE==BOOLEAN_TYPE)||(t3->TYPE==BOOLEAN_TYPE))
+										if((t1->TYPE==BOOLEAN_TYPE)||(t3->TYPE==BOOLEAN_TYPE))
 									flag=0;
-				 	 
-											 else if(t1->TYPE==VOID_TYPE)	{
+
+											else if(t1->TYPE==VOID_TYPE)	{
 								if(t1->NODETYPE!=ID_NODETYPE)
-									 		flag=0;
-									 
-									 	if(t1->Lentry)	{
-									 
-									 		if(t1->Lentry->TYPE!=INT_VARTYPE)
-									 			flag=0;
-									 
-									 	}
-									 	else	{
-									 		if(t1->Gentry->TYPE!=INT_VARTYPE)
-									 			flag=0;
-									 
-									 	}
-										 }
-										 
-										 else if(t3->TYPE==VOID_TYPE)	{
+											flag=0;
+
+										if(t1->Lentry)	{
+
+											if(t1->Lentry->TYPE!=INT_VARTYPE)
+												flag=0;
+
+										}
+										else	{
+											if(t1->Gentry->TYPE!=INT_VARTYPE)
+												flag=0;
+
+										}
+										}
+
+										else if(t3->TYPE==VOID_TYPE)	{
 									if(t3->NODETYPE!=ID_NODETYPE)
-									 		flag=0;
-									 
-									 	if(t3->Lentry)	{
-									 
-									 		if(t3->Lentry->TYPE!=INT_VARTYPE)
-									 			flag=0;
-									 	}
-									 	else	{
-									 		if(t3->Gentry->TYPE!=INT_VARTYPE)
-									 			flag=0;
-									 	}
-				 							 }
-				 							 break;
+											flag=0;
+
+										if(t3->Lentry)	{
+
+											if(t3->Lentry->TYPE!=INT_VARTYPE)
+												flag=0;
+										}
+										else	{
+											if(t3->Gentry->TYPE!=INT_VARTYPE)
+												flag=0;
+										}
+											}
+											break;
 						case AND_NODETYPE :
 						case OR_NODETYPE	:
-										 if((t1->TYPE==INT_TYPE)||(t3->TYPE==INT_TYPE))
-										 	flag = 0;
-										 else if(t1->TYPE==VOID_TYPE)	{
+										if((t1->TYPE==INT_TYPE)||(t3->TYPE==INT_TYPE))
+											flag = 0;
+										else if(t1->TYPE==VOID_TYPE)	{
 								if(t1->NODETYPE!=ID_NODETYPE)
-									 		flag=0;
-									 
-									 	if(t1->Lentry)	{
-										 	if(t1->Lentry->TYPE!=BOOL_VARTYPE)
-										 		flag=0;
-									 	}
-									 	else	{
-									 		if(t1->Gentry->TYPE!=BOOL_VARTYPE)
-									 			flag=0;
-									 	}
-									 }
-										 else if(t3->TYPE==VOID_TYPE)	{
+											flag=0;
+
+										if(t1->Lentry)	{
+											if(t1->Lentry->TYPE!=BOOL_VARTYPE)
+												flag=0;
+										}
+										else	{
+											if(t1->Gentry->TYPE!=BOOL_VARTYPE)
+												flag=0;
+										}
+									}
+										else if(t3->TYPE==VOID_TYPE)	{
 									if(t3->NODETYPE!=ID_NODETYPE)
-									 		flag=0;
-									 
-									 	if(t3->Lentry)	{
-										 	if(t3->Lentry->TYPE!=BOOL_VARTYPE)
-										 		flag=0;
-									 	}
-									 	else	{
-									 		if(t3->Gentry->TYPE!=BOOL_VARTYPE)
-									 			flag=0;
-									 	}
-				 							 }
-				 							 break;
-				 							 
-				 			case NOT_NODETYPE	:
-				 						if(t1->TYPE==INT_TYPE)
-				 							flag=0;
-				 						else if(t1->TYPE==VOID_TYPE)	{
-				 
-				 							if(t1->NODETYPE!=ID_NODETYPE)	{
-				 								flag=0;
-				 							}
-				 
-				 							else {
-				 
-				 								if(t1->Lentry)	{
-				 
-				 									if(t1->Lentry->TYPE!=BOOL_VARTYPE)
-				 										flag=0;
-				 								}
-				 
-				 								else if(t1->Gentry)	{
-				 									if(t1->Gentry->TYPE!=BOOL_VARTYPE)
-				 										flag=0;
-				 								}
-				 
-				 							}
-				 						}
-				 						break;
+											flag=0;
+
+										if(t3->Lentry)	{
+											if(t3->Lentry->TYPE!=BOOL_VARTYPE)
+												flag=0;
+										}
+										else	{
+											if(t3->Gentry->TYPE!=BOOL_VARTYPE)
+												flag=0;
+										}
+											}
+											break;
+
+							case NOT_NODETYPE	:
+										if(t1->TYPE==INT_TYPE)
+											flag=0;
+										else if(t1->TYPE==VOID_TYPE)	{
+
+											if(t1->NODETYPE!=ID_NODETYPE)	{
+												flag=0;
+											}
+
+											else {
+
+												if(t1->Lentry)	{
+
+													if(t1->Lentry->TYPE!=BOOL_VARTYPE)
+														flag=0;
+												}
+
+												else if(t1->Gentry)	{
+													if(t1->Gentry->TYPE!=BOOL_VARTYPE)
+														flag=0;
+												}
+
+											}
+										}
+										break;
 					}
 					break;
 		case VOID_TYPE			:
 					switch(t2->NODETYPE)	{
-						case IF_NODETYPE	 :
-										 if(t1->TYPE==INT_TYPE)
-										 	flag=0;
-										 else if(t1->TYPE==VOID_TYPE)	{
-										 	if(t1->NODETYPE!=ID_NODETYPE)
-									 		flag=0;
-									 	if(t1->Lentry)	{
-									 		if(t1->Lentry->TYPE!=BOOL_VARTYPE)
-									 			flag=0;
-									 	}
-									 	else {
-									 
-									 	if(t1->Gentry->TYPE!=BOOL_VARTYPE)
-									 		flag=0;
-									 	}
-									 }
-										 break;
+						case IF_NODETYPE	:
+										if(t1->TYPE==INT_TYPE)
+											flag=0;
+										else if(t1->TYPE==VOID_TYPE)	{
+											if(t1->NODETYPE!=ID_NODETYPE)
+											flag=0;
+										if(t1->Lentry)	{
+											if(t1->Lentry->TYPE!=BOOL_VARTYPE)
+												flag=0;
+										}
+										else {
+
+										if(t1->Gentry->TYPE!=BOOL_VARTYPE)
+											flag=0;
+										}
+									}
+										break;
 						case WHILE_NODETYPE:
-										 if(t1->TYPE==INT_TYPE)
-										 	flag=0;
-										 else if(t1->TYPE==VOID_TYPE)	{
-										 	if(t1->NODETYPE!=ID_NODETYPE)
-									 		flag=0;
-									 	if(t1->Lentry)	{
-									 		if(t1->Lentry->TYPE!=BOOL_VARTYPE)
-									 			flag=0;
-									 	}
-									 	else {
-									 
-									 	if(t1->Gentry->TYPE!=BOOL_VARTYPE)
-									 		flag=0;
-									 	}
-									 }
-										 break;
+										if(t1->TYPE==INT_TYPE)
+											flag=0;
+										else if(t1->TYPE==VOID_TYPE)	{
+											if(t1->NODETYPE!=ID_NODETYPE)
+											flag=0;
+										if(t1->Lentry)	{
+											if(t1->Lentry->TYPE!=BOOL_VARTYPE)
+												flag=0;
+										}
+										else {
+
+										if(t1->Gentry->TYPE!=BOOL_VARTYPE)
+											flag=0;
+										}
+									}
+										break;
 						case RETURN_NODETYPE :
 									if(t1->TYPE==BOOLEAN_TYPE)	{
 										flag = 0;
@@ -674,7 +674,7 @@ void Linstall(char *name,int type)	{
 		printf("You have already declared %s ",name);
 		yyerror("");
 	}
-	else	 {
+	else	{
 		temp = (lsymbol *)malloc(sizeof(lsymbol));
 		temp->NAME = name;
 		temp->TYPE = type;
@@ -683,7 +683,7 @@ void Linstall(char *name,int type)	{
 		mem_loc = mem_loc + 1;
 		temp->NEXT = NULL;
 		if(lhead==NULL)
-			lhead = llast = temp;		 
+			lhead = llast = temp;
 		else	{
 			llast->NEXT = temp;
 			llast = temp;
@@ -708,7 +708,7 @@ void Ginstall(char *name,int type,int size)	{
 		printf("You have already declared %s ",name);
 		yyerror("");
 	}
-	else	 {
+	else	{
 		temp = (gsymbol *)malloc(sizeof(gsymbol));
 		temp->NAME = name;
 		temp->TYPE = type;
@@ -718,7 +718,7 @@ void Ginstall(char *name,int type,int size)	{
 		mem_loc = mem_loc+size;
 		temp->NEXT = NULL;
 		if(ghead==NULL)
-			ghead = glast = temp;		 
+			ghead = glast = temp;
 		else	{
 			glast->NEXT = temp;
 			glast = temp;
@@ -730,7 +730,7 @@ int evaltree(tnode *temp)	{
 	int temp_label;
 	if(temp)	{
 		switch(temp->TYPE)	{
-			case DUMMY_TYPE	: 	evaltree(temp->Ptr1);
+			case DUMMY_TYPE	:	evaltree(temp->Ptr1);
 						evaltree(temp->Ptr2);
 						break;
 			case VOID_TYPE		: 
@@ -837,11 +837,11 @@ int evaltree(tnode *temp)	{
 								//temp->VALUE = *ptr;
 								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nMOV R%d, R%d", regcount, regcount-1);
-								fclose(fp);								 
+								fclose(fp);
 								regcount++;
 								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nMOV R%d, [R%d]", regcount-2, regcount-1);
-								fclose(fp);								 
+								fclose(fp);
 								regcount--;
 								break;
 					case IF_NODETYPE :
@@ -859,20 +859,20 @@ int evaltree(tnode *temp)	{
 								temp_label = label;
 								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nJZ R%d, LABEL%d",regcount-1,temp_label-2);
-								fclose(fp);								 
+								fclose(fp);
 								regcount--;
 								evaltree(temp->Ptr2);
 								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nJMP LABEL%d",temp_label-1);
-								fclose(fp);								 
+								fclose(fp);
 								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nLABEL%d:",temp_label-2);
-								fclose(fp);								 
+								fclose(fp);
 								label++;
 								evaltree(temp->Ptr3);
 								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nLABEL%d:",temp_label-1);
-								fclose(fp);								 
+								fclose(fp);
 								label++;
 								break;
 					case WHILE_NODETYPE : 
@@ -885,35 +885,35 @@ int evaltree(tnode *temp)	{
 								*/
 								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nLABEL%d:",label);
-								fclose(fp);								 
+								fclose(fp);
 								label=label+2;
 								temp_label = label-1;
 								evaltree(temp->Ptr1);
 								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nJZ R%d, LABEL%d",regcount-1, temp_label);
-								fclose(fp);								 
+								fclose(fp);
 								regcount--;
 								evaltree(temp->Ptr2);
 								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nJMP LABEL%d",temp_label-1);
-								fclose(fp);								 
+								fclose(fp);
 								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nLABEL%d:", temp_label);
-								fclose(fp);								 
+								fclose(fp);
 								break;
 					case RETURN_NODETYPE :	fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\n");
-								fclose(fp);								 
+								fclose(fp);
 								//return evaltree(temp->Ptr1);
 								break;
 					}
 							break;
 			case INT_TYPE		: 
 				switch(temp->NODETYPE)	{
-				case NUMBER_NODETYPE: 	//return(temp->VALUE);
+				case NUMBER_NODETYPE:	//return(temp->VALUE);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOV R%d, %d",regcount, temp->VALUE);
-							fclose(fp);								 
+							fclose(fp);
 							regcount++;
 							break;
 				case PLUS_NODETYPE	:	//return(evaltree(temp->Ptr1)+evaltree(temp->Ptr2));
@@ -922,32 +922,32 @@ int evaltree(tnode *temp)	{
 							evaltree(temp->Ptr2);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nADD R%d, R%d", regcount-2, regcount-1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount--;
 							break;
-				case MINUS_NODETYPE : 	//return(evaltree(temp->Ptr1)-evaltree(temp->Ptr2));
+				case MINUS_NODETYPE :	//return(evaltree(temp->Ptr1)-evaltree(temp->Ptr2));
 							//temp->VALUE=temp->Ptr1->VALUE - temp->Ptr2->VALUE;
 							evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nSUB R%d, R%d", regcount-2, regcount-1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount--;
 							break;
-				case MULT_NODETYPE	: 	//return(evaltree(temp->Ptr1)*evaltree(temp->Ptr2));
+				case MULT_NODETYPE	:	//return(evaltree(temp->Ptr1)*evaltree(temp->Ptr2));
 							//temp->VALUE=temp->Ptr1->VALUE * temp->Ptr2->VALUE;
 							evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMUL R%d, R%d", regcount-2, regcount-1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount--;
 							break;
-				case DIV_NODETYPE	 : 	evaltree(temp->Ptr1);
+				case DIV_NODETYPE	:	evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nDIV R%d, R%d", regcount-2, regcount-1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount--;
 							//return(evaltree(temp->Ptr1)/evaltree(temp->Ptr2));
 							//temp->VALUE=temp->Ptr1->VALUE / temp->Ptr2->VALUE;
@@ -957,7 +957,7 @@ int evaltree(tnode *temp)	{
 								//*(temp->Ptr1->Lentry->BINDING) = evaltree(temp->Ptr2);
 								fp = fopen(OutFile,"a"); 
 								fprintf(fp, "\nMOV R%d, %d", regcount, *(temp->Ptr1->Lentry->BINDING));
-								fclose(fp);								 
+								fclose(fp);
 								regcount++;
 								//temp->Ptr1->VALUE = temp->Ptr2->VALUE;
 							}
@@ -967,12 +967,12 @@ int evaltree(tnode *temp)	{
 									//ptr = ptr + evaltree(temp->Ptr1->Ptr1);
 									fp = fopen(OutFile,"a"); 
 									fprintf(fp, "\nMOV R%d, %d", regcount, *(temp->Ptr1->Gentry->BINDING));
-									fclose(fp);								 
+									fclose(fp);
 									regcount++;
 									evaltree(temp->Ptr1->Ptr1);
 									fp = fopen(OutFile,"a"); 
 									fprintf(fp, "\nADD R%d, R%d", regcount-2, regcount-1);
-									fclose(fp);								 
+									fclose(fp);
 									regcount--;
 									//*ptr = evaltree(temp->Ptr2);
 									//temp->Ptr1->VALUE = temp->Ptr2->VALUE;
@@ -981,7 +981,7 @@ int evaltree(tnode *temp)	{
 									//*(temp->Ptr1->Gentry->BINDING) = evaltree(temp->Ptr2);
 									fp = fopen(OutFile,"a"); 
 									fprintf(fp, "\nMOV R%d, %d", regcount, *(temp->Ptr1->Gentry->BINDING));
-									fclose(fp);								 
+									fclose(fp);
 									regcount++;
 									//temp->Ptr1->VALUE = temp->Ptr2->VALUE;
 								}
@@ -989,16 +989,16 @@ int evaltree(tnode *temp)	{
 							evaltree(temp->Ptr2);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOV [R%d], R%d", regcount-2, regcount-1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount = regcount - 2;
 							break;
-				case MODULO_NODETYPE:	 //return(evaltree(temp->Ptr1)%evaltree(temp->Ptr2));
+				case MODULO_NODETYPE:	//return(evaltree(temp->Ptr1)%evaltree(temp->Ptr2));
 							//temp->VALUE=temp->Ptr1->VALUE % temp->Ptr2->VALUE;
 							evaltree(temp->Ptr1);
 							evaltree(temp->Ptr2);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOD R%d, R%d", regcount-2, regcount-1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount--;
 							break;
 				}
@@ -1009,18 +1009,18 @@ int evaltree(tnode *temp)	{
 							evaltree(temp->Ptr1);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOV R%d, 1",regcount);
-							fclose(fp);								 
+							fclose(fp);
 							regcount++;
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOV R%d, 2",regcount);
-							fclose(fp);								 
+							fclose(fp);
 							regcount++;
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nADD R%d, R%d", regcount-3, regcount-2);
-							fclose(fp);								 
+							fclose(fp);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOD R%d, R%d", regcount-3, regcount-1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount = regcount -2 ;
 							//return(!val);
 							break;
@@ -1028,7 +1028,7 @@ int evaltree(tnode *temp)	{
 							evaltree(temp->Ptr2);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nLT R%d, R%d", regcount-2, regcount-1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount--;
 							//val=((evaltree(temp->Ptr1))<(evaltree(temp->Ptr2)))?1:0;
 							//return val;
@@ -1037,7 +1037,7 @@ int evaltree(tnode *temp)	{
 							evaltree(temp->Ptr2);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nLE R%d, R%d", regcount-2, regcount-1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount--;
 							//val=((evaltree(temp->Ptr1))<=(evaltree(temp->Ptr2)))?1:0;
 							//return val;
@@ -1046,7 +1046,7 @@ int evaltree(tnode *temp)	{
 							evaltree(temp->Ptr2);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nGT R%d, R%d", regcount-2, regcount-1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount--;
 							//val=((evaltree(temp->Ptr1))>(evaltree(temp->Ptr2)))?1:0;
 							//return val;
@@ -1055,7 +1055,7 @@ int evaltree(tnode *temp)	{
 							evaltree(temp->Ptr2);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nGE R%d, R%d", regcount-2, regcount-1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount--;
 							//val=((evaltree(temp->Ptr1))>=(evaltree(temp->Ptr2)))?1:0;
 							//return val;
@@ -1064,7 +1064,7 @@ int evaltree(tnode *temp)	{
 							evaltree(temp->Ptr2);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nEQ R%d, R%d", regcount-2, regcount-1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount--;
 							//val=((evaltree(temp->Ptr1))==(evaltree(temp->Ptr2)))?1:0;
 							//return val;
@@ -1073,7 +1073,7 @@ int evaltree(tnode *temp)	{
 							evaltree(temp->Ptr2);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nNE R%d, R%d", regcount-2, regcount-1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount--;
 							//val=((evaltree(temp->Ptr1))!=(evaltree(temp->Ptr2)))?1:0;
 							//return val;
@@ -1082,7 +1082,7 @@ int evaltree(tnode *temp)	{
 							evaltree(temp->Ptr2);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMUL R%d, R%d", regcount-2, regcount-1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount--;
 							//val=((evaltree(temp->Ptr1))&&(evaltree(temp->Ptr2)))?1:0;
 							//return val;
@@ -1092,27 +1092,27 @@ int evaltree(tnode *temp)	{
 							evaltree(temp->Ptr2);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOV R%d, 2", regcount);
-							fclose(fp);								 
+							fclose(fp);
 							regcount++;
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nADD R%d, R%d", regcount-3, regcount-2);
-							fclose(fp);								 
+							fclose(fp);
 							fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOD R%d, R%d", regcount-3, regcount-1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount = regcount - 2;
 							//val=((evaltree(temp->Ptr1))||(evaltree(temp->Ptr2)))?1:0;
 							//return val;
 							break;
 				case TRUE_NODETYPE :		fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOV R%d, %d", regcount, 1);
-							fclose(fp);								 
+							fclose(fp);
 							regcount++;
 							//return(1);
 							break;
 				case FALSE_NODETYPE:		fp = fopen(OutFile,"a"); 
 							fprintf(fp, "\nMOV R%d, %d", regcount, 0);
-							fclose(fp);								 
+							fclose(fp);
 							regcount++;
 							//return(0);
 							break;
