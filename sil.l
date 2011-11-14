@@ -14,7 +14,7 @@ tnode *TreeCreate(int ,int ,char *,int ,tnode *, tnode *, tnode *,lsymbol *,gsym
 %}
 %%
 
-"\n"		{}
+"\n"		{ }
 
 "["			{
 				return *yytext;
@@ -127,6 +127,14 @@ tnode *TreeCreate(int ,int ,char *,int ,tnode *, tnode *, tnode *,lsymbol *,gsym
 				yylval.ptr = TreeCreate(BOOLEAN_TYPE,EQ_NODETYPE,NULL,0,NULL,NULL,NULL,NULL,NULL);
 				return EQ;
 			}
+
+
+"!"			{
+				yylval.ptr = TreeCreate(BOOLEAN_TYPE,NOT_NODETYPE,NULL,0,NULL,NULL,NULL,NULL,NULL);
+				return NOT;
+			}
+
+
 
 "!="			{
 				yylval.ptr = TreeCreate(BOOLEAN_TYPE,NE_NODETYPE,NULL,0,NULL,NULL,NULL,NULL,NULL);

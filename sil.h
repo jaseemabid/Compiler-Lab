@@ -30,6 +30,7 @@
 #define OR_NODETYPE		8
 #define TRUE_NODETYPE		9
 #define	FALSE_NODETYPE		10
+#define NOT_NODETYPE  		11
 
 #define BOOL_VARTYPE		0
 #define INT_VARTYPE		1
@@ -57,9 +58,9 @@ struct Tnode {
 
 struct Gsymbol {
 
-char *NAME;
-int TYPE;
-int SIZE;
-int *BINDING; 
-struct Gsymbol *NEXT;
+	char *NAME;
+	int TYPE;
+	int SIZE;
+	int *BINDING; 
+	struct Gsymbol *NEXT;
 };
