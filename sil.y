@@ -59,38 +59,52 @@ FILE *fp;
 
 Prog :		GDefblock Mainblock				{	return evaltree($2);	}
 		;
+
 GDefblock :	DECL GDefList ENDDECL
 		;
+
 GDefList :
 		|GDefList GDecl
 		;
+
 GDecl :		Type GIdList	';'
 		;
+
 GIdList :	GId 
 		|GIdList ',' GId 
 		;
+
 GId :		ID '[' CONST ']'					{	Ginstall($1->NAME,vartype,$3->VALUE);	}
 		|ID						{	Ginstall($1->NAME,vartype,1);		}
 		;
+
 Type :		INTEGER						{	vartype = INT_VARTYPE;			}
 		|BOOLEAN					{		vartype = BOOL_VARTYPE;			}
 		;
+
 Mainblock :	INTEGER MAIN '(' ')' '{' LDefblock Body '}'		{	$$ = $7;				}
 		;
+
 LDefblock :	DECL LDefList ENDDECL
 		;
+
 LDefList :
 		|LDefList LDecl ';'
 		;
+
 LDecl :		Type LIdList
 		;
+
 LIdList :	LId 
 		|LIdList ',' LId 
 		;
+
 LId :		ID						{	Linstall($1->NAME,vartype);			}
 		;
+
 Body :		BEGINING StmtList RetStmt END			{	$$ = $2;					} 
 		;
+
 StmtList :							{	$$ = NULL;				}
 		| StmtList Stmt ';'				{
 									tnode *temp;
@@ -100,6 +114,7 @@ StmtList :							{	$$ = NULL;				}
 										$$=temp;
 									}
 		;
+
 expr :		NOT expr					{
 									typecheck($2,$1,NULL);
 									$1->Ptr1 = $2;
@@ -224,9 +239,11 @@ expr :		NOT expr					{
 		|TRUE						{	$$=$1;					}
 		|FALSE						{	$$=$1;					}
 		;
+
 endif :		ELSE StmtList ENDIF				{	$$=$2;					}
 		| ENDIF					{	$$=NULL;				}
 		;
+
 Stmt :		READ '(' ID '[' expr ']' ')'			{
 									gsymbol *gtemp;
 									gtemp = Glookup($3->NAME);
@@ -375,8 +392,10 @@ Stmt :		READ '(' ID '[' expr ']' ')'			{
 									$$ = $2;
 								}
 		;
+
 RetStmt :	RETURN	expr ';'				{	typecheck($2,$1,NULL);			}
 		;
+
 
 %%
 
